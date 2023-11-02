@@ -1,0 +1,29 @@
+/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/bitsandbytes/cuda_setup/main.py:147: UserWarning: /home/abdelrahman.sadallah/.conda/envs/nlp did not contain ['libcudart.so', 'libcudart.so.11.0', 'libcudart.so.12.0'] as expected! Searching further paths...
+  warn(msg)
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:12<00:12, 12.89s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:18<00:00,  8.73s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:18<00:00,  9.35s/it]
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Map:   0%|          | 0/272600 [00:00<?, ? examples/s]Map:   0%|          | 0/272600 [00:00<?, ? examples/s]
+Traceback (most recent call last):
+  File "/home/abdelrahman.sadallah/mbzuai/llm-optimized-fintuning/train.py", line 145, in <module>
+    trainer = SFTTrainer(
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/trl/trainer/sft_trainer.py", line 189, in __init__
+    train_dataset = self._prepare_dataset(
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/trl/trainer/sft_trainer.py", line 261, in _prepare_dataset
+    return self._prepare_non_packed_dataloader(
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/trl/trainer/sft_trainer.py", line 314, in _prepare_non_packed_dataloader
+    tokenized_dataset = dataset.map(
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/datasets/arrow_dataset.py", line 592, in wrapper
+    out: Union["Dataset", "DatasetDict"] = func(self, *args, **kwargs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/datasets/arrow_dataset.py", line 557, in wrapper
+    out: Union["Dataset", "DatasetDict"] = func(self, *args, **kwargs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/datasets/arrow_dataset.py", line 3097, in map
+    for rank, done, content in Dataset._map_single(**dataset_kwargs):
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/datasets/arrow_dataset.py", line 3474, in _map_single
+    batch = apply_function_on_filtered_inputs(
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/datasets/arrow_dataset.py", line 3353, in apply_function_on_filtered_inputs
+    processed_inputs = function(*fn_args, *additional_args, **fn_kwargs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/trl/trainer/sft_trainer.py", line 296, in tokenize
+    element[dataset_text_field] if not use_formatting_func else formatting_func(element),
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/datasets/formatting/formatting.py", line 270, in __getitem__
+    value = self.data[key]
+KeyError: 'text'
