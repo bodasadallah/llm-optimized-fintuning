@@ -3,7 +3,7 @@
 
 Prompt Tags:
 
-    WP: Writing Prompt <!-- Main tag -->
+    WP: Writing Prompt <!-- Main tag for the future -->
 
     SP: Simple Prompt
 
