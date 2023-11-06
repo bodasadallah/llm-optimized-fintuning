@@ -1,0 +1,157 @@
+starting.......................
+
+===================================BUG REPORT===================================
+Welcome to bitsandbytes. For bug reports, please run
+
+python -m bitsandbytes
+
+ and submit this information together with your error trace to: https://github.com/TimDettmers/bitsandbytes/issues
+================================================================================
+CUDA SETUP: CUDA runtime path found: /home/abdelrahman.sadallah/local/cuda-11.7/lib64/libcudart.so
+CUDA SETUP: Highest compute capability among GPUs detected: 7.5
+CUDA SETUP: Detected CUDA version 117
+CUDA SETUP: Loading binary /home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/bitsandbytes/libbitsandbytes_cuda117.so...
+{'loss': 2.1337, 'learning_rate': 0.0002, 'epoch': 0.0}
+{'loss': 1.9886, 'learning_rate': 0.0002, 'epoch': 0.0}
+{'loss': 2.0054, 'learning_rate': 0.0002, 'epoch': 0.0}
+{'loss': 2.0012, 'learning_rate': 0.0002, 'epoch': 0.0}
+{'loss': 1.998, 'learning_rate': 0.0002, 'epoch': 0.01}
+{'loss': 1.9843, 'learning_rate': 0.0002, 'epoch': 0.01}
+{'loss': 2.0161, 'learning_rate': 0.0002, 'epoch': 0.01}
+{'loss': 2.0032, 'learning_rate': 0.0002, 'epoch': 0.01}
+{'loss': 1.975, 'learning_rate': 0.0002, 'epoch': 0.01}
+{'loss': 1.9535, 'learning_rate': 0.0002, 'epoch': 0.01}
+{'loss': 1.9721, 'learning_rate': 0.0002, 'epoch': 0.01}
+{'loss': 1.9978, 'learning_rate': 0.0002, 'epoch': 0.01}
+{'loss': 2.0109, 'learning_rate': 0.0002, 'epoch': 0.02}
+{'loss': 1.9852, 'learning_rate': 0.0002, 'epoch': 0.02}
+{'loss': 1.9854, 'learning_rate': 0.0002, 'epoch': 0.02}
+{'loss': 2.0057, 'learning_rate': 0.0002, 'epoch': 0.02}
+{'loss': 1.9941, 'learning_rate': 0.0002, 'epoch': 0.02}
+{'loss': 1.9766, 'learning_rate': 0.0002, 'epoch': 0.02}
+{'loss': 1.9775, 'learning_rate': 0.0002, 'epoch': 0.02}
+{'loss': 1.966, 'learning_rate': 0.0002, 'epoch': 0.02}
+{'train_runtime': 3581.3874, 'train_samples_per_second': 1.787, 'train_steps_per_second': 0.056, 'train_loss': 1.9965099239349364, 'epoch': 0.02}
+Done training
+PeftModelForCausalLM(
+  (base_model): LoraModel(
+    (model): MistralForCausalLM(
+      (model): MistralModel(
+        (embed_tokens): Embedding(32000, 4096)
+        (layers): ModuleList(
+          (0-31): 32 x MistralDecoderLayer(
+            (self_attn): MistralAttention(
+              (q_proj): Linear4bit(
+                (lora_dropout): ModuleDict(
+                  (default): Dropout(p=0.1, inplace=False)
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=4096, out_features=64, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4096, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (base_layer): Linear4bit(in_features=4096, out_features=4096, bias=False)
+              )
+              (k_proj): Linear4bit(
+                (lora_dropout): ModuleDict(
+                  (default): Dropout(p=0.1, inplace=False)
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=4096, out_features=64, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=64, out_features=1024, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (base_layer): Linear4bit(in_features=4096, out_features=1024, bias=False)
+              )
+              (v_proj): Linear4bit(
+                (lora_dropout): ModuleDict(
+                  (default): Dropout(p=0.1, inplace=False)
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=4096, out_features=64, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=64, out_features=1024, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (base_layer): Linear4bit(in_features=4096, out_features=1024, bias=False)
+              )
+              (o_proj): Linear4bit(
+                (lora_dropout): ModuleDict(
+                  (default): Dropout(p=0.1, inplace=False)
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=4096, out_features=64, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4096, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (base_layer): Linear4bit(in_features=4096, out_features=4096, bias=False)
+              )
+              (rotary_emb): MistralRotaryEmbedding()
+            )
+            (mlp): MistralMLP(
+              (gate_proj): Linear4bit(
+                (lora_dropout): ModuleDict(
+                  (default): Dropout(p=0.1, inplace=False)
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=4096, out_features=64, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=64, out_features=14336, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (base_layer): Linear4bit(in_features=4096, out_features=14336, bias=False)
+              )
+              (up_proj): Linear4bit(
+                (lora_dropout): ModuleDict(
+                  (default): Dropout(p=0.1, inplace=False)
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=4096, out_features=64, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=64, out_features=14336, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (base_layer): Linear4bit(in_features=4096, out_features=14336, bias=False)
+              )
+              (down_proj): Linear4bit(
+                (lora_dropout): ModuleDict(
+                  (default): Dropout(p=0.1, inplace=False)
+                )
+                (lora_A): ModuleDict(
+                  (default): Linear(in_features=14336, out_features=64, bias=False)
+                )
+                (lora_B): ModuleDict(
+                  (default): Linear(in_features=64, out_features=4096, bias=False)
+                )
+                (lora_embedding_A): ParameterDict()
+                (lora_embedding_B): ParameterDict()
+                (base_layer): Linear4bit(in_features=14336, out_features=4096, bias=False)
+              )
+              (act_fn): SiLUActivation()
+            )
+            (input_layernorm): MistralRMSNorm()
+            (post_attention_layernorm): MistralRMSNorm()
+          )
+        )
+        (norm): MistralRMSNorm()
+      )
+      (lm_head): Linear(in_features=4096, out_features=32000, bias=False)
+    )
+  )
+)
+ ending 

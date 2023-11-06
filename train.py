@@ -3,19 +3,16 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, AutoTokenizer
 from transformers import TrainingArguments
 from trl import SFTTrainer
-
-dataset_source = load_dataset('text',data_files="datasets/english/writingPrompts/train.wp_source", split="train")
-dataset_target = load_dataset('text',data_files="datasets/english/writingPrompts/train.wp_target", split="train")
-
-
-dataset_source =  dataset_source.rename_column("text", "source_text")
-dataset_target = dataset_target.rename_column("text", "target_text")
-
-train_dataset = dataset_source.add_column("target_text", dataset_target['target_text']) 
-
-
-
+from evaluate import load
+from peft import LoraConfig
+from args_parser import get_args
 import re
+
+
+
+
+
+
 DEFAULT_SYSTEM_PROMPT = """
 Below is a story idea. Write a short story based on this context.
 """.strip()
@@ -57,111 +54,144 @@ def generate_text(data_point):
     }
      
 
-train_dataset = train_dataset.map(generate_text, remove_columns=["source_text", "target_text"])
 
 
-model_name = "mistralai/Mistral-7B-v0.1"
 
-bnb_config = BitsAndBytesConfig(
-    load_in_4bit=True,
-    bnb_4bit_quant_type="nf4",
-    bnb_4bit_compute_dtype=torch.float16,
-)
+if __name__ == "__main__":
+    args = get_args()
 
-model = AutoModelForCausalLM.from_pretrained(
-    model_name,
-    quantization_config=bnb_config,
-    trust_remote_code=True
-)
-# model.config.use_cache = False
-tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
-tokenizer.pad_token = tokenizer.eos_token
-
-output_dir = "./experiments"
-per_device_train_batch_size = 4
-gradient_accumulation_steps = 4
-optim = "paged_adamw_32bit"
-save_steps = 100
-logging_steps = 10
-learning_rate = 2e-4
-max_grad_norm = 0.3
-max_steps = 500
-warmup_ratio = 0.03
-lr_scheduler_type = "constant"
-
-training_arguments = TrainingArguments(
-    output_dir=output_dir,
-    per_device_train_batch_size=per_device_train_batch_size,
-    gradient_accumulation_steps=gradient_accumulation_steps,
-    optim=optim,
-    save_steps=save_steps,
-    logging_steps=logging_steps,
-    learning_rate=learning_rate,
-    fp16=True,
-    max_grad_norm=max_grad_norm,
-    max_steps=max_steps,
-    warmup_ratio=warmup_ratio,
-    group_by_length=True,
-    lr_scheduler_type=lr_scheduler_type,
-    gradient_checkpointing=True,
-)
-
-from peft import LoraConfig
-
-lora_alpha = 16
-lora_dropout = 0.1
-lora_r = 64
+    for arg in vars(args):
+        print(arg, getattr(args, arg))
 
 
-lora_target_modules = [
-    "q_proj",
-    "up_proj",
-    "o_proj",
-    "k_proj",
-    "down_proj",
-    "gate_proj",
-    "v_proj",
-]
-
-peft_config = LoraConfig(
-    lora_alpha=lora_alpha,
-    lora_dropout=lora_dropout,
-    r=lora_r,
-    bias="none",
-    task_type="CAUSAL_LM",
-    target_modules = lora_target_modules
-    # target_modules=[
-    #     "query_key_value",
-    #     "dense",
-    #     "dense_h_to_4h",
-    #     "dense_4h_to_h",
-    # ]
-)
+    dataset_source = load_dataset('text',data_files="datasets/english/writingPrompts/train.wp_source", split="train")
+    dataset_target = load_dataset('text',data_files="datasets/english/writingPrompts/train.wp_target", split="train")
+    dataset_source =  dataset_source.rename_column("text", "source_text")
+    dataset_target = dataset_target.rename_column("text", "target_text")
+    train_dataset = dataset_source.add_column("target_text", dataset_target['target_text']) 
+    train_dataset = train_dataset.map(generate_text, remove_columns=["source_text", "target_text"])
 
 
-max_seq_length = 512
+    model_name = args.model_name
 
 
-trainer = SFTTrainer(
-    model=model,
-    train_dataset=train_dataset,
-    peft_config=peft_config,
-    dataset_text_field="prompt",
-    max_seq_length=max_seq_length,
-    tokenizer=tokenizer,
-    args=training_arguments,
-)
+
+    bnb_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.float16,
+    )
+
+    model = AutoModelForCausalLM.from_pretrained(
+        model_name,
+        quantization_config=bnb_config,
+        trust_remote_code=True
+    )
+    # model.config.use_cache = False
+    tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+    tokenizer.pad_token = tokenizer.eos_token
+    tokenizer.padding_side = 'right'
 
 
-for name, module in trainer.model.named_modules():
-    if "norm" in name:
-        module = module.to(torch.float32)
+    output_dir = args.output_dir
+
+    per_device_train_batch_size =  args.per_device_train_batch_size
+    per_device_val_batch_size = args.per_device_val_batch_size
+    gradient_accumulation_steps = args.gradient_accumulation_steps
 
 
-trainer.train()
-
-trainer.save_model()
+    epoch_steps = len(train_dataset) // (per_device_train_batch_size * gradient_accumulation_steps)
 
 
-print("Done training")
-print(trainer.model)
+    optim = args.optim
+
+    save_steps = args.save_steps
+    logging_steps = args.logging_steps
+    learning_rate = args.learning_rate
+    max_grad_norm = args.max_grad_norm
+
+
+    max_steps = epoch_steps * 10
+
+    warmup_ratio = args.warmup_ratio
+    lr_scheduler_type = args.lr_scheduler_type
+
+    training_arguments = TrainingArguments(
+        output_dir=output_dir,
+        per_device_train_batch_size=per_device_train_batch_size,
+        gradient_accumulation_steps=gradient_accumulation_steps,
+        optim=optim,
+        save_steps=save_steps,
+        logging_steps=logging_steps,
+        learning_rate=learning_rate,
+        fp16=True,
+        max_grad_norm=max_grad_norm,
+        max_steps=max_steps,
+        warmup_ratio=warmup_ratio,
+        group_by_length=True,
+        lr_scheduler_type=lr_scheduler_type,
+        gradient_checkpointing=True,
+    )
+
+
+    lora_alpha = args.lora_alpha
+    lora_dropout = args.lora_dropout
+    lora_r = args.lora_r
+
+
+    lora_target_modules = [
+        "q_proj",
+        "up_proj",
+        "o_proj",
+        "k_proj",
+        "down_proj",
+        "gate_proj",
+        "v_proj",
+    ]
+
+    peft_config = LoraConfig(
+        lora_alpha=lora_alpha,
+        lora_dropout=lora_dropout,
+        r=lora_r,
+        bias="none",
+        task_type="CAUSAL_LM",
+        target_modules = lora_target_modules
+        # target_modules=[
+        #     "query_key_value",
+        #     "dense",
+        #     "dense_h_to_4h",
+        #     "dense_4h_to_h",
+        # ]
+    )
+
+
+    max_seq_length = args.max_seq_length
+
+
+    trainer = SFTTrainer(
+        model=model,
+        train_dataset=train_dataset,
+        peft_config=peft_config,
+        dataset_text_field="prompt",
+        max_seq_length=max_seq_length,
+        tokenizer=tokenizer,
+        args=training_arguments,
+    )
+
+
+    for name, module in trainer.model.named_modules():
+        if "norm" in name:
+            module = module.to(torch.float32)
+
+
+    if args.checkpoint_path:
+        trainer.train(args.checkpoint_path)
+    else:
+        trainer.train()
+
+
+    trainer.save_model()
+
+
+    print("Done training")
+    print(trainer.model)
