@@ -4,7 +4,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 from transformers import TrainingArguments
 from trl import SFTTrainer
 from evaluate import load
-from peft import LoraConfig
+from peft import LoraConfig, prepare_model_for_kbit_training
 from args_parser import get_args
 import re
 
@@ -39,6 +39,20 @@ def clean_text(text):
     text = re.sub(r"\s+", " ", text)
     return re.sub(r"\^[^ ]+", "", text)
 
+
+def print_trainable_parameters(model):
+    """
+    Prints the number of trainable parameters in the model.
+    """
+    trainable_params = 0
+    all_param = 0
+    for _, param in model.named_parameters():
+        all_param += param.numel()
+        if param.requires_grad:
+            trainable_params += param.numel()
+    print(
+        f"trainable params: {trainable_params} || all params: {all_param} || trainable%: {100 * trainable_params / all_param}"
+    )
 
 
 
@@ -79,7 +93,9 @@ if __name__ == "__main__":
     bnb_config = BitsAndBytesConfig(
         load_in_4bit=True,
         bnb_4bit_quant_type="nf4",
-        bnb_4bit_compute_dtype=torch.float16,
+        # bnb_4bit_compute_dtype=torch.float16,
+        bnb_4bit_compute_dtype=torch.bfloat16,
+        bnb_4bit_use_double_quant=True
     )
 
     model = AutoModelForCausalLM.from_pretrained(
@@ -87,7 +103,23 @@ if __name__ == "__main__":
         quantization_config=bnb_config,
         trust_remote_code=True
     )
-    # model.config.use_cache = False
+
+
+    ## Enable gradient checkpointing
+    if args.gradient_checkpointing:
+        model.gradient_checkpointing_enable()
+
+    ## Prepare model for k-bit training
+    # model = prepare_model_for_kbit_training(model)
+
+
+    ## Print the number of trainable parameters
+    print_trainable_parameters(model)
+
+    ## Silence the warnings
+    model.config.use_cache = False
+
+
     tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = 'right'
@@ -130,7 +162,7 @@ if __name__ == "__main__":
         warmup_ratio=warmup_ratio,
         group_by_length=True,
         lr_scheduler_type=lr_scheduler_type,
-        gradient_checkpointing=True,
+        gradient_checkpointing=args.gradient_checkpointing,
     )
 
 

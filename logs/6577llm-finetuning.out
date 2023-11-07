@@ -1,10 +1,10 @@
 starting.......................
 llm_finetuning
-max_steps 10000
-save_steps 400
+max_steps 20
+save_steps 1000
 logging_steps 100
 max_seq_length 512
-checkpoint_path experiments/checkpoint-3600
+checkpoint_path None
 base_prompt Below is a story idea. Write a short story based on this context.
 train_dataset_path datasets/english/writingPrompts/train.wp_source
 val_dataset_path datasets/english/writingPrompts/valid.wp_source
@@ -26,4 +26,3 @@ lora_r 64
 bias none
 task_type CAUSAL_LM
 target_modules ['q_proj', 'up_proj', 'o_proj', 'k_proj', 'down_proj', 'gate_proj', 'v_proj']
- ending 

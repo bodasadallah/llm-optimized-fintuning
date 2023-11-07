@@ -1,7 +1,7 @@
-Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:34<00:34, 34.22s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:42<00:00, 18.95s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:42<00:00, 21.24s/it]
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:25<00:25, 25.39s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:31<00:00, 14.29s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:31<00:00, 15.95s/it]
 Loading the tokenizer from the `special_tokens_map.json` and the `added_tokens.json` will be removed in `transformers 5`,  it is kept for forward compatibility, but it is recommended to update your `tokenizer_config.json` by uploading it again. You will see the new `added_tokens_decoder` attribute that will store the relevant information.
 Traceback (most recent call last):
-  File "/home/abdelrahman.sadallah/mbzuai/llm-optimized-fintuning/train.py", line 188, in <module>
+  File "/home/abdelrahman.sadallah/mbzuai/llm-optimized-fintuning/train.py", line 220, in <module>
     trainer.train(args.checkpoint_path)
   File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/transformers/trainer.py", line 1567, in train
     self._load_from_checkpoint(resume_from_checkpoint)

@@ -71,10 +71,24 @@ def add_args(parser: argparse.ArgumentParser):
     parser.add_argument('--group_by_length',
                             type=bool,
                             default=True)
+    
+####################################### QLoRA #######################################
+
+    parser.add_argument('--bnb_4bit_quant_type',
+                            type=str,
+                            default="nf4")
+    parser.add_argument('--bnb_4bit_compute_dtype',
+                            type=str,
+                            default="bfloat16")
+    parser.add_argument('--bnb_4bit_use_double_quant',
+                            type=bool,
+                            default=True)
     parser.add_argument('--gradient_checkpointing',
                             type=bool,
                             default=True)
     
+    
+
 
     ##################################### LORA #####################################
     parser.add_argument('--lora_alpha',
