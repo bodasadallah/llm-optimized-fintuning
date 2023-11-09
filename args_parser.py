@@ -24,16 +24,46 @@ def add_args(parser: argparse.ArgumentParser):
     parser.add_argument('--checkpoint_path',
                         type=str,
                         default=None)
+    parser.add_argument('--evaluation_strategy',
+                            type=str,
+                            default="steps")
+    parser.add_argument('--eval_steps',
+                            type=int,
+                            default=100)
+    parser.add_argument('--log_level',
+                            type=str,
+                            default="info")
+    parser.add_argument('--logging_strategy',
+                            type=str,
+                            default="steps")
+    parser.add_argument('--save_total_limit',
+                            type=int,
+                            default=10)
+    parser.add_argument('--run_name',
+                            type=str,
+                            default="Mistral")
+ 
     parser.add_argument('--base_prompt',
                             type=str,
                             default="""Below is a story idea. Write a short story based on this context.""")
     
-    parser.add_argument('--train_dataset_path',
+    parser.add_argument('--train_dataset_source_path',
                             type=str,
                             default='datasets/english/writingPrompts/train.wp_source')
-    parser.add_argument('--val_dataset_path',
+    parser.add_argument('--train_dataset_target_path',
+                            type=str,
+                            default='datasets/english/writingPrompts/train.wp_target')
+    
+    parser.add_argument('--val_dataset_source_path',
                             type=str,
                             default='datasets/english/writingPrompts/valid.wp_source')
+    parser.add_argument('--val_dataset_target_path',
+                            type=str,
+                            default='datasets/english/writingPrompts/valid.wp_target')
+
+    parser.add_argument('--field',
+                            type=str,
+                            default='prompt')
     parser.add_argument('--model_name',
                             type=str,
                             default='meta-llama/Llama-2-7b-hf')

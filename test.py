@@ -2,7 +2,7 @@ import torch
 from peft import PeftModel    
 from transformers import AutoModelForCausalLM, AutoTokenizer, LlamaTokenizer, StoppingCriteria, StoppingCriteriaList, TextIteratorStreamer
 
-adapters_name  = "experiments/checkpoint-16000"
+adapters_name  = "experiments/Llama-2-7b-hf/checkpoint-24000"
 # model_name = "mistralai/Mistral-7B-v0.1"
 model_name = "meta-llama/Llama-2-7b-hf"
 
@@ -46,7 +46,9 @@ base_text = '''### Instruction: Below is a story idea. Write a short story based
 
 
 while 1:
+    print('-'*20)
     text = input("Enter a prompt: ")
+    print('-'*20)
     text = base_text + text
 
     output = gen(m, text)

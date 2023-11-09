@@ -9,66 +9,7 @@ from peft import LoraConfig, prepare_model_for_kbit_training
 from args_parser import get_args
 import re
 from pathlib import Path
-
-
-
-
-
-DEFAULT_SYSTEM_PROMPT = """
-Below is a story idea. Write a short story based on this context.
-""".strip()
-
-
-def generate_training_prompt(
-    idea: str, story: str, system_prompt: str = DEFAULT_SYSTEM_PROMPT
-) -> str:
-    return f"""### Instruction: {system_prompt}
-
-### Input:
-{idea.strip()}
-
-### Response:
-{story}
-""".strip()
-     
-
-
-
-def clean_text(text):
-    text = re.sub(r"http\S+", "", text)
-    text = re.sub(r"@[^\s]+", "", text)
-    text = re.sub(r"\s+", " ", text)
-    return re.sub(r"\^[^ ]+", "", text)
-
-
-def print_trainable_parameters(model):
-    """
-    Prints the number of trainable parameters in the model.
-    """
-    trainable_params = 0
-    all_param = 0
-    for _, param in model.named_parameters():
-        all_param += param.numel()
-        if param.requires_grad:
-            trainable_params += param.numel()
-    print(
-        f"trainable params: {trainable_params} || all params: {all_param} || trainable%: {100 * trainable_params / all_param}"
-    )
-
-
-
-def generate_text(data_point):
-    idea = clean_text(data_point["source_text"])
-    story = clean_text(data_point["target_text"])
-
-
-    return {
-        "idea": idea,
-        "story": story,
-        "prompt": generate_training_prompt(idea, story),
-    }
-     
-
+from utils import *
 
 
 
@@ -79,18 +20,17 @@ if __name__ == "__main__":
         print(arg, getattr(args, arg))
 
 
-    dataset_source = load_dataset('text',data_files="datasets/english/writingPrompts/train.wp_source", split="train")
-    dataset_target = load_dataset('text',data_files="datasets/english/writingPrompts/train.wp_target", split="train")
-    dataset_source =  dataset_source.rename_column("text", "source_text")
-    dataset_target = dataset_target.rename_column("text", "target_text")
-    train_dataset = dataset_source.add_column("target_text", dataset_target['target_text']) 
-    train_dataset = train_dataset.map(generate_text, remove_columns=["source_text", "target_text"])
 
+    # Get the datasets
+    train_dataset, val_dataset = get_datasets(train_dataset_source_path=args.train_dataset_source_path,
+                                                     train_dataset_target_path=args.train_dataset_target_path,
+                                                     val_dataset_source_path=args.val_dataset_source_path,
+                                                     val_dataset_target_path=args.val_dataset_target_path,
+                                                     field = args.field)
 
     model_name = args.model_name
 
-
-
+    ## Bits and Bytes config
     bnb_config = BitsAndBytesConfig(
         load_in_4bit=True,
         bnb_4bit_quant_type="nf4",
@@ -120,7 +60,7 @@ if __name__ == "__main__":
     ## Silence the warnings
     model.config.use_cache = False
 
-
+    ## Load the tokenizer
     tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = 'right'
@@ -195,12 +135,6 @@ if __name__ == "__main__":
         bias="none",
         task_type="CAUSAL_LM",
         target_modules = lora_target_modules
-        # target_modules=[
-        #     "query_key_value",
-        #     "dense",
-        #     "dense_h_to_4h",
-        #     "dense_4h_to_h",
-        # ]
     )
 
 
@@ -210,8 +144,9 @@ if __name__ == "__main__":
     trainer = SFTTrainer(
         model=model,
         train_dataset=train_dataset,
+        eval_dataset=val_dataset,
         peft_config=peft_config,
-        dataset_text_field="prompt",
+        dataset_text_field=args.field,
         max_seq_length=max_seq_length,
         tokenizer=tokenizer,
         args=training_arguments,
