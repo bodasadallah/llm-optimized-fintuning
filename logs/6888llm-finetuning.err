@@ -1,0 +1,87 @@
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:31<00:31, 31.77s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:41<00:00, 19.06s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:41<00:00, 20.97s/it]
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+wandb: Currently logged in as: bodasadallah2. Use `wandb login --relogin` to force relogin
+wandb: wandb version 0.16.0 is available!  To upgrade, please run:
+wandb:  $ pip install wandb --upgrade
+wandb: Tracking run with wandb version 0.15.12
+wandb: Run data is saved locally in /home/abdelrahman.sadallah/mbzuai/llm-optimized-fintuning/wandb/run-20231108_162332-qviktgsg
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run clean-firebrand-21
+wandb: ⭐️ View project at https://wandb.ai/bodasadallah2/huggingface
+wandb: 🚀 View run at https://wandb.ai/bodasadallah2/huggingface/runs/qviktgsg
+  0%|          | 0/170370 [00:00<?, ?it/s]You're using a LlamaTokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to encode the text followed by a call to the `pad` method to get a padded encoding.
+Traceback (most recent call last):
+  File "/home/abdelrahman.sadallah/mbzuai/llm-optimized-fintuning/train.py", line 227, in <module>
+    trainer.train(args.checkpoint_path)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/transformers/trainer.py", line 1591, in train
+    return inner_training_loop(
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/transformers/trainer.py", line 1892, in _inner_training_loop
+    tr_loss_step = self.training_step(model, inputs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/transformers/trainer.py", line 2776, in training_step
+    loss = self.compute_loss(model, inputs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/transformers/trainer.py", line 2801, in compute_loss
+    outputs = model(**inputs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/accelerate/utils/operations.py", line 659, in forward
+    return model_forward(*args, **kwargs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/accelerate/utils/operations.py", line 647, in __call__
+    return convert_to_fp32(self.model_forward(*args, **kwargs))
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/torch/amp/autocast_mode.py", line 14, in decorate_autocast
+    return func(*args, **kwargs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/peft/peft_model.py", line 977, in forward
+    return self.base_model(
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/peft/tuners/tuners_utils.py", line 106, in forward
+    return self.model.forward(*args, **kwargs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/accelerate/hooks.py", line 164, in new_forward
+    output = module._old_forward(*args, **kwargs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/transformers/models/mistral/modeling_mistral.py", line 733, in forward
+    outputs = self.model(
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/accelerate/hooks.py", line 164, in new_forward
+    output = module._old_forward(*args, **kwargs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/transformers/models/mistral/modeling_mistral.py", line 614, in forward
+    layer_outputs = torch.utils.checkpoint.checkpoint(
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/torch/utils/checkpoint.py", line 249, in checkpoint
+    return CheckpointFunction.apply(function, preserve, *args)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/torch/autograd/function.py", line 506, in apply
+    return super().apply(*args, **kwargs)  # type: ignore[misc]
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/torch/utils/checkpoint.py", line 107, in forward
+    outputs = run_function(*args)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/transformers/models/mistral/modeling_mistral.py", line 610, in custom_forward
+    return module(*inputs, past_key_value, output_attentions)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/accelerate/hooks.py", line 164, in new_forward
+    output = module._old_forward(*args, **kwargs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/transformers/models/mistral/modeling_mistral.py", line 344, in forward
+    hidden_states = self.mlp(hidden_states)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/accelerate/hooks.py", line 164, in new_forward
+    output = module._old_forward(*args, **kwargs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/transformers/models/mistral/modeling_mistral.py", line 170, in forward
+    return self.down_proj(self.act_fn(self.gate_proj(x)) * self.up_proj(x))
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/peft/tuners/lora/bnb.py", line 269, in forward
+    result = self.base_layer.forward(x, *args, **kwargs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/accelerate/hooks.py", line 164, in new_forward
+    output = module._old_forward(*args, **kwargs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/bitsandbytes/nn/modules.py", line 248, in forward
+    out = bnb.matmul_4bit(x, self.weight.t(), bias=bias, quant_state=self.weight.quant_state)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/bitsandbytes/autograd/_functions.py", line 579, in matmul_4bit
+    return MatMul4Bit.apply(A, B, out, bias, quant_state)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/torch/autograd/function.py", line 506, in apply
+    return super().apply(*args, **kwargs)  # type: ignore[misc]
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/bitsandbytes/autograd/_functions.py", line 516, in forward
+    output = torch.nn.functional.linear(A, F.dequantize_4bit(B, state).to(A.dtype).t(), bias)
+torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 112.00 MiB (GPU 0; 23.62 GiB total capacity; 8.92 GiB already allocated; 110.19 MiB free; 9.20 GiB reserved in total by PyTorch) If reserved memory is >> allocated memory try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
+wandb: Waiting for W&B process to finish... (failed 1). Press Control-C to abort syncing.
+wandb: 🚀 View run clean-firebrand-21 at: https://wandb.ai/bodasadallah2/huggingface/runs/qviktgsg
+wandb: ️⚡ View job at https://wandb.ai/bodasadallah2/huggingface/jobs/QXJ0aWZhY3RDb2xsZWN0aW9uOjExMjEzMTgxMg==/version_details/v4
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20231108_162332-qviktgsg/logs

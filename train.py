@@ -1,3 +1,4 @@
+import pathlib
 from datasets import load_dataset
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, AutoTokenizer
@@ -7,7 +8,7 @@ from evaluate import load
 from peft import LoraConfig, prepare_model_for_kbit_training
 from args_parser import get_args
 import re
-
+from pathlib import Path
 
 
 
@@ -147,6 +148,12 @@ if __name__ == "__main__":
 
     warmup_ratio = args.warmup_ratio
     lr_scheduler_type = args.lr_scheduler_type
+
+
+    output_dir = args.output_dir + f"/{model_name.split('/')[-1]}"
+    Path(output_dir).mkdir(parents=True, exist_ok=True)
+    print(f"Saving the model to {output_dir}")
+
 
     training_arguments = TrainingArguments(
         output_dir=output_dir,
