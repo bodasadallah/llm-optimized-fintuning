@@ -63,6 +63,20 @@ def generate_text(data_point, field, train):
         "story": story,
         field: generate_training_prompt(idea, story, train),
     }
+
+def get_dataset(source_path, target_path, field = 'prompt'):
+
+    dataset_source = load_dataset('text',data_files=source_path, split="train")
+    dataset_target = load_dataset('text',data_files=target_path, split="train")
+
+    dataset_source =  dataset_source.rename_column("text", "source_text")
+    dataset_target = dataset_target.rename_column("text", "target_text")
+
+    dataset = dataset_source.add_column("target_text", dataset_target['target_text']) 
+
+    dataset = dataset.map(generate_text, fn_kwargs={"field": field}, remove_columns=["source_text", "target_text"])
+
+    return dataset
      
 
 def get_datasets(train_dataset_source_path,
