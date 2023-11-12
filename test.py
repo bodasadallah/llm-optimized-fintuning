@@ -2,9 +2,12 @@ import torch
 from peft import PeftModel    
 from transformers import AutoModelForCausalLM, AutoTokenizer, LlamaTokenizer, StoppingCriteria, StoppingCriteriaList, TextIteratorStreamer
 
-adapters_name  = "experiments/Llama-2-7b-hf/checkpoint-24000"
-# model_name = "mistralai/Mistral-7B-v0.1"
+adapters_name  = "experiments/Llama-2-7b-hf/checkpoint-16000"
 model_name = "meta-llama/Llama-2-7b-hf"
+
+
+# adapters_name  = "experiments/Llama-2-7b-hf/checkpoint-16000"
+# model_name = "mistralai/Mistral-7B-v0.1"
 
 
 
@@ -28,11 +31,18 @@ print(f"Successfully loaded the model {model_name} into memory")
 
 
 
-def gen(model, text: str):
+def gen(model, text: str, tmp=0.9, top_p=0.6, max_length=1024):
     inputs = tok(text, return_tensors="pt").to('cuda')
     inputs_length = len(inputs["input_ids"][0])
     with torch.inference_mode():
-        outputs = model.generate(**inputs, max_new_tokens=512)
+        outputs = model.generate(**inputs, max_new_tokens=max_length,
+                                do_sample=True,
+                                top_p=top_p,
+                                temperature=tmp)
+
+
+
+
     return tok.decode(outputs[0][inputs_length:], skip_special_tokens=True)
      
 
@@ -44,17 +54,26 @@ base_text = '''### Instruction: Below is a story idea. Write a short story based
 
 # Happy kid was playing at the park, but then he broke his leg, and his life got completely changed.
 
+with open('generations.txt', 'a') as f:
+    while 1:
+        print('-'*20)
+        text = input("Enter a prompt: ")
+        print('-'*20)
 
-while 1:
-    print('-'*20)
-    text = input("Enter a prompt: ")
-    print('-'*20)
-    text = base_text + text
+        f.write('='*30 + '\n')
+        f.write(text + '\n')
+        f.write('-'*20 + '\n')
 
-    output = gen(m, text)
+        text = base_text + text
 
-    output = output.replace('<newline>', '\n')
+        output = gen(m, text)
 
-    print('-'*20)
-    print(output)
-    print('-'*20)
+        output = output.replace('<newline>', '\n')
+
+        f.write(output + '\n')
+        f.write('='*30 + '\n')
+        f.flush()
+
+        print('-'*20)
+        print(output)
+        print('-'*20)

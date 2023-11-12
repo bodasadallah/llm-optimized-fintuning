@@ -42,7 +42,8 @@ if __name__ == "__main__":
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
         quantization_config=bnb_config,
-        trust_remote_code=True
+        trust_remote_code=True,
+        use_flash_attention_2=args.use_flash_attention_2,
     )
 
 
@@ -84,6 +85,11 @@ if __name__ == "__main__":
     max_grad_norm = args.max_grad_norm
 
 
+
+    print(f"save_steps: {save_steps}")
+    print(f"logging_steps: {logging_steps}")
+
+
     max_steps = epoch_steps * 10
 
     warmup_ratio = args.warmup_ratio
@@ -91,7 +97,9 @@ if __name__ == "__main__":
 
 
     output_dir = args.output_dir + f"/{model_name.split('/')[-1]}"
+    loggig_dir = args.logging_dir + f"/{model_name.split('/')[-1]}" + f"/logs"
     Path(output_dir).mkdir(parents=True, exist_ok=True)
+    Path(loggig_dir).mkdir(parents=True, exist_ok=True)
     print(f"Saving the model to {output_dir}")
 
 
@@ -100,6 +108,13 @@ if __name__ == "__main__":
         per_device_train_batch_size=per_device_train_batch_size,
         gradient_accumulation_steps=gradient_accumulation_steps,
         optim=optim,
+        per_device_eval_batch_size=per_device_val_batch_size,
+        evaluation_strategy=args.evaluation_strategy,
+        do_train=args.do_train,
+        do_eval=args.do_eval,
+        # eval_steps=10,
+        eval_steps=args.eval_steps,
+        run_name=args.run_name,
         save_steps=save_steps,
         logging_steps=logging_steps,
         learning_rate=learning_rate,
@@ -109,7 +124,10 @@ if __name__ == "__main__":
         warmup_ratio=warmup_ratio,
         group_by_length=True,
         lr_scheduler_type=lr_scheduler_type,
+        report_to=args.report_to,
         gradient_checkpointing=args.gradient_checkpointing,
+        neftune_noise_alpha=0.1,
+        logging_dir=loggig_dir,
     )
 
 
@@ -118,15 +136,16 @@ if __name__ == "__main__":
     lora_r = args.lora_r
 
 
-    lora_target_modules = [
-        "q_proj",
-        "up_proj",
-        "o_proj",
-        "k_proj",
-        "down_proj",
-        "gate_proj",
-        "v_proj",
-    ]
+    lora_target_modules = args.lora_target_modules
+    # [
+    #     "q_proj",
+    #     "up_proj",
+    #     "o_proj",
+    #     "k_proj",
+    #     "down_proj",
+    #     "gate_proj",
+    #     "v_proj",
+    # ]
 
     peft_config = LoraConfig(
         lora_alpha=lora_alpha,
@@ -159,12 +178,12 @@ if __name__ == "__main__":
 
 
     if args.checkpoint_path:
-        trainer.train(args.checkpoint_path)
+        trainer.train(resume_from_checkpoint=args.checkpoint_path)
     else:
         trainer.train()
 
 
-    trainer.save_model()
+    # trainer.save_model()
 
 
     print("Done training")

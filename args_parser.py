@@ -9,6 +9,16 @@ def get_args():
 
 def add_args(parser: argparse.ArgumentParser):
 
+    parser.add_argument('--logging_dir',
+                            type=str,
+                            default="./logs")
+    
+    parser.add_argument('--use_flash_attention_2',
+                            type=bool,
+                            default=False)
+    parser.add_argument('--report_to',
+                            type=str,
+                            default="tensorboard")
     parser.add_argument('--max_steps',
                             type=int,
                             default=10000)
@@ -24,6 +34,13 @@ def add_args(parser: argparse.ArgumentParser):
     parser.add_argument('--checkpoint_path',
                         type=str,
                         default=None)
+    parser.add_argument('--do_eval',
+                            type=bool,
+                            default=False)
+    parser.add_argument('--do_train',
+                            type=bool,
+                            default=False)   
+    
     parser.add_argument('--evaluation_strategy',
                             type=str,
                             default="steps")
@@ -136,7 +153,7 @@ def add_args(parser: argparse.ArgumentParser):
     parser.add_argument('--task_type',
                             type=str,
                             default="CAUSAL_LM")
-    parser.add_argument('--target_modules',
+    parser.add_argument('--lora_target_modules',
                             type=list,
                             default=[
                                 "q_proj",

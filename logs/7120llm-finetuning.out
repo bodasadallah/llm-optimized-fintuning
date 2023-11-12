@@ -1,0 +1,80 @@
+starting.......................
+llm_finetuning
+report_to all
+max_steps 10000
+save_steps 1000
+logging_steps 10
+max_seq_length 512
+checkpoint_path experiments/Llama-2-7b-hf/checkpoint-24000
+do_eval True
+do_train False
+evaluation_strategy steps
+eval_steps 2000
+log_level info
+logging_strategy steps
+save_total_limit 10
+run_name meta-llama/Llama-2-7b-hf
+base_prompt Below is a story idea. Write a short story based on this context.
+train_dataset_source_path datasets/english/writingPrompts/train.wp_source
+train_dataset_target_path datasets/english/writingPrompts/train.wp_target
+val_dataset_source_path datasets/english/writingPrompts/valid.wp_source
+val_dataset_target_path datasets/english/writingPrompts/valid.wp_target
+field prompt
+model_name meta-llama/Llama-2-7b-hf
+output_dir ./experiments
+per_device_train_batch_size 8
+per_device_val_batch_size 8
+gradient_accumulation_steps 2
+optim paged_adamw_32bit
+learning_rate 0.0002
+max_grad_norm 0.3
+warmup_ratio 0.03
+lr_scheduler_type constant
+group_by_length True
+bnb_4bit_quant_type nf4
+bnb_4bit_compute_dtype bfloat16
+bnb_4bit_use_double_quant True
+gradient_checkpointing True
+lora_alpha 16
+lora_dropout 0.1
+lora_r 64
+bias none
+task_type CAUSAL_LM
+target_modules ['q_proj', 'up_proj', 'o_proj', 'k_proj', 'down_proj', 'gate_proj', 'v_proj']
+trainable params: 262410240 || all params: 3500412928 || trainable%: 7.496550989769399
+Saving the model to ./experiments/Llama-2-7b-hf
+{'loss': 1.8146, 'learning_rate': 0.0002, 'epoch': 1.41}
+{'loss': 1.816, 'learning_rate': 0.0002, 'epoch': 1.42}
+{'loss': 1.8125, 'learning_rate': 0.0002, 'epoch': 1.43}
+{'loss': 1.8193, 'learning_rate': 0.0002, 'epoch': 1.43}
+{'loss': 1.8252, 'learning_rate': 0.0002, 'epoch': 1.44}
+{'eval_loss': 1.9564886093139648, 'eval_runtime': 3096.063, 'eval_samples_per_second': 5.045, 'eval_steps_per_second': 0.631, 'epoch': 1.44}
+{'loss': 1.8086, 'learning_rate': 0.0002, 'epoch': 1.44}
+{'loss': 1.8149, 'learning_rate': 0.0002, 'epoch': 1.45}
+{'loss': 1.813, 'learning_rate': 0.0002, 'epoch': 1.46}
+{'loss': 1.8126, 'learning_rate': 0.0002, 'epoch': 1.46}
+{'loss': 1.8053, 'learning_rate': 0.0002, 'epoch': 1.47}
+{'eval_loss': 1.9558125734329224, 'eval_runtime': 3096.2001, 'eval_samples_per_second': 5.045, 'eval_steps_per_second': 0.631, 'epoch': 1.47}
+{'loss': 1.8103, 'learning_rate': 0.0002, 'epoch': 1.47}
+{'loss': 1.8117, 'learning_rate': 0.0002, 'epoch': 1.48}
+{'loss': 1.8084, 'learning_rate': 0.0002, 'epoch': 1.48}
+{'loss': 1.8118, 'learning_rate': 0.0002, 'epoch': 1.49}
+{'loss': 1.8312, 'learning_rate': 0.0002, 'epoch': 1.5}
+{'eval_loss': 1.9574401378631592, 'eval_runtime': 3095.2235, 'eval_samples_per_second': 5.046, 'eval_steps_per_second': 0.631, 'epoch': 1.5}
+{'loss': 1.812, 'learning_rate': 0.0002, 'epoch': 1.5}
+{'loss': 1.8077, 'learning_rate': 0.0002, 'epoch': 1.51}
+{'loss': 1.8087, 'learning_rate': 0.0002, 'epoch': 1.51}
+{'loss': 1.8127, 'learning_rate': 0.0002, 'epoch': 1.52}
+{'loss': 1.8226, 'learning_rate': 0.0002, 'epoch': 1.53}
+{'eval_loss': 1.9575966596603394, 'eval_runtime': 3094.6851, 'eval_samples_per_second': 5.047, 'eval_steps_per_second': 0.631, 'epoch': 1.53}
+{'loss': 1.8133, 'learning_rate': 0.0002, 'epoch': 1.53}
+{'loss': 1.8231, 'learning_rate': 0.0002, 'epoch': 1.54}
+{'loss': 1.8231, 'learning_rate': 0.0002, 'epoch': 1.54}
+{'loss': 1.821, 'learning_rate': 0.0002, 'epoch': 1.55}
+{'loss': 1.815, 'learning_rate': 0.0002, 'epoch': 1.56}
+{'eval_loss': 1.9597358703613281, 'eval_runtime': 3094.2705, 'eval_samples_per_second': 5.048, 'eval_steps_per_second': 0.631, 'epoch': 1.56}
+{'loss': 1.834, 'learning_rate': 0.0002, 'epoch': 1.56}
+{'loss': 1.7977, 'learning_rate': 0.0002, 'epoch': 1.57}
+{'loss': 1.8114, 'learning_rate': 0.0002, 'epoch': 1.57}
+{'loss': 1.8026, 'learning_rate': 0.0002, 'epoch': 1.58}
+{'loss': 1.8223, 'learning_rate': 0.0002, 'epoch': 1.58}
