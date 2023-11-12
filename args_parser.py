@@ -12,6 +12,9 @@ def add_args(parser: argparse.ArgumentParser):
     parser.add_argument('--logging_dir',
                             type=str,
                             default="./logs")
+    parser.add_argument('--english',
+                            type=bool,
+                            default=True)
     
     parser.add_argument('--use_flash_attention_2',
                             type=bool,
