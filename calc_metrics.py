@@ -25,7 +25,12 @@ if __name__ == "__main__":
 
 
     # Get the datasets
-    val_dataset = get_dataset(args.val_dataset_source_path, args.val_dataset_target_path, field = args.field)
+    train_dataset, val_dataset, test_dataset = get_datasets(args.train_dataset_source_path, args.train_dataset_target_path,
+                               args.val_dataset_source_path, args.val_dataset_target_path,
+                               args.test_dataset_source_path, args.test_dataset_target_path,
+                               field = args.field)
+
+    val_dataset = val_dataset[:2]
 
     model_name = args.model_name
 
@@ -74,9 +79,9 @@ if __name__ == "__main__":
 
     # model.load_state_dict(args.checkpoint_path)
     # print(val_dataset.keys())
-    encodings = tokenizer("\n\n".join(val_dataset["promt"]), return_tensors="pt")
+    encodings = tokenizer("\n\n".join(val_dataset["prompt"][0]), return_tensors="pt")
 
-    max_length = 512
+    max_length = 4096
     stride = 512
     seq_len = encodings.input_ids.size(1)
     device = "cuda"
@@ -93,8 +98,8 @@ if __name__ == "__main__":
         target_ids[:, :-trg_len] = -100
 
         with torch.no_grad():
-            outputs = model(input_ids, labels=target_ids)
-
+            outputs = model(input_ids)
+            
             # loss is calculated using CrossEntropyLoss which averages over valid labels
             # N.B. the model only calculates loss over trg_len - 1 labels, because it internally shifts the labels
             # to the left by 1.

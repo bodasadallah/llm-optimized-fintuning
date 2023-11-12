@@ -77,6 +77,13 @@ def add_args(parser: argparse.ArgumentParser):
     parser.add_argument('--val_dataset_target_path',
                             type=str,
                             default='datasets/english/writingPrompts/valid.wp_target')
+    
+    parser.add_argument('--test_dataset_source_path',
+                            type=str,
+                            default='datasets/english/writingPrompts/test.wp_source')
+    parser.add_argument('--test_dataset_target_path',
+                            type=str,
+                            default='datasets/english/writingPrompts/test.wp_target')
 
     parser.add_argument('--field',
                             type=str,

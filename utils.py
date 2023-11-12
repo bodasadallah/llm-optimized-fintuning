@@ -93,8 +93,8 @@ def get_datasets(train_dataset_source_path,
     val_dataset_source = load_dataset('text',data_files=val_dataset_source_path,  split="train")
     val_dataset_target = load_dataset('text',data_files=val_dataset_target_path,  split="train" )
 
-    test_dataset_source = load_dataset('text',data_files=test_dataset_source_path,  split="test")
-    test_dataset_target = load_dataset('text',data_files=test_dataset_target_path,  split="test" )
+    test_dataset_source = load_dataset('text',data_files=test_dataset_source_path,  split="train")
+    test_dataset_target = load_dataset('text',data_files=test_dataset_target_path,  split="train" )
 
     train_dataset_source =  train_dataset_source.rename_column("text", "source_text")
     train_dataset_target = train_dataset_target.rename_column("text", "target_text")
@@ -107,12 +107,10 @@ def get_datasets(train_dataset_source_path,
     val_dataset = val_dataset_source.add_column("target_text", val_dataset_target['target_text']) 
     test_dataset = test_dataset_source.add_column("target_text", test_dataset_target['target_text'])
 
-
-
     train_dataset = train_dataset.map(generate_text, fn_kwargs={"field": field, "train": True}, remove_columns=["source_text", "target_text"])
     val_dataset = val_dataset.map(generate_text, fn_kwargs={"field": field,"train": False}, remove_columns=["source_text", "target_text"])
-    test_dataset = test_dataset_source.map(generate_text, fn_kwargs={"field": field,"train": False}, remove_columns=["source_text", "target_text"])
+    test_dataset = test_dataset.map(generate_text, fn_kwargs={"field": field,"train": False}, remove_columns=["source_text", "target_text"])
 
-    return train_dataset, val_dataset,test_dataset
+    return train_dataset, val_dataset, test_dataset
 
 
