@@ -11,6 +11,10 @@ from pathlib import Path
 from utils import *
 from tqdm import tqdm
 
+# if you need to update datasets from cache, run once with next two lines uncommented
+# from datasets import set_caching_enabled
+# set_caching_enabled(False)
+
 tmp=0.9
 top_p=0.6
 max_length=1024
@@ -21,6 +25,7 @@ if __name__ == "__main__":
     dataset = get_dataset(
         args.source_path, args.target_path, field="prompt", prompt_only=True
     )
+    # dataset.cleanup_cache_files()
 
     model_name = args.model_name
 
