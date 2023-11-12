@@ -39,7 +39,7 @@ def gen(model, text: str):
 base_text = '''### Instruction: Below is a story idea. Write a short story based on this context.
 
 
-### Input:
+### Input: a happy kid
 '''
 
 # Happy kid was playing at the park, but then he broke his leg, and his life got completely changed.
