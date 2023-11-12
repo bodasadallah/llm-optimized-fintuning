@@ -21,12 +21,20 @@ if __name__ == "__main__":
 
 
 
-    # Get the datasets
-    train_dataset, val_dataset = get_datasets(train_dataset_source_path=args.train_dataset_source_path,
+    if args.english:
+        # Get the english datasets
+        train_dataset, val_dataset = get_datasets(train_dataset_source_path=args.train_dataset_source_path,
                                                      train_dataset_target_path=args.train_dataset_target_path,
                                                      val_dataset_source_path=args.val_dataset_source_path,
                                                      val_dataset_target_path=args.val_dataset_target_path,
                                                      field = args.field)
+
+
+    else:
+        # Get the arabic datasets
+        train_dataset, val_dataset, test_dataset = get_arabic_datasets(field = 'prompt')
+
+
 
     model_name = args.model_name
 
