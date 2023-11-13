@@ -88,7 +88,12 @@ def add_args(parser: argparse.ArgumentParser):
     parser.add_argument('--test_dataset_target_path',
                             type=str,
                             default='datasets/english/writingPrompts/test.wp_target')
-
+    parser.add_argument('--source_path',
+                            type=str,
+                            default='datasets/english/writingPrompts/test.wp_source')
+    parser.add_argument('--target_path',
+                            type=str,
+                            default='datasets/english/writingPrompts/test.wp_target')
     parser.add_argument('--field',
                             type=str,
                             default='prompt')
@@ -105,7 +110,7 @@ def add_args(parser: argparse.ArgumentParser):
                             default=4)
     parser.add_argument('--per_device_val_batch_size',
                             type=int,
-                            default=4)
+                            default=2)
     parser.add_argument('--gradient_accumulation_steps',
                             type=int,
                             default=2)

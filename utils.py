@@ -29,12 +29,12 @@ DEFAULT_SYSTEM_PROMPT = """
 Below is a story idea. Write a short story based on this context.
 """.strip()
 def generate_training_prompt(
-    idea: str, story: str, system_prompt: str = DEFAULT_SYSTEM_PROMPT, treain: bool = True
+    idea: str, story: str, system_prompt: str = DEFAULT_SYSTEM_PROMPT, train: bool = True
 ) -> str:
     
 
     ## For training, we need to provide the system prompt, the idea and the story
-    if treain:
+    if train:
         return f"""### Instruction: {system_prompt}
 
     ### Input:
@@ -46,6 +46,13 @@ def generate_training_prompt(
     
     ## For validation and testing, we only need to provide the idea
     else:
+        # print("in generating")
+        # print(system_prompt)
+        # print(f"""### Instruction: {system_prompt}
+
+#     ### Input:
+#     {idea.strip()}
+# """.strip())
         return f"""### Instruction: {system_prompt}
 
     ### Input:
@@ -57,24 +64,29 @@ def generate_text(data_point, field, train):
     idea = clean_text(data_point["source_text"])
     story = clean_text(data_point["target_text"])
 
-
     return {
         "idea": idea,
         "story": story,
-        field: generate_training_prompt(idea, story, train),
+        field: generate_training_prompt(
+            idea, story, system_prompt=DEFAULT_SYSTEM_PROMPT, train=train
+        )
     }
 
-def get_dataset(source_path, target_path, field = 'prompt'):
-
-    dataset_source = load_dataset('text',data_files=source_path, split="train")
-    dataset_target = load_dataset('text',data_files=target_path, split="train")
+def get_dataset(source_path, target_path, field='prompt', prompt_only=False):
+    dataset_source = load_dataset('text', data_files=source_path, split="train")
+    dataset_target = load_dataset('text', data_files=target_path, split="train")
 
     dataset_source =  dataset_source.rename_column("text", "source_text")
     dataset_target = dataset_target.rename_column("text", "target_text")
 
-    dataset = dataset_source.add_column("target_text", dataset_target['target_text']) 
+    dataset = dataset_source.add_column(
+        "target_text", dataset_target['target_text']
+    ) 
 
-    dataset = dataset.map(generate_text, fn_kwargs={"field": field}, remove_columns=["source_text", "target_text"])
+    dataset = dataset.map(
+        generate_text, fn_kwargs={"field": field, "train": not prompt_only},
+        remove_columns=["source_text", "target_text"], 
+    )
 
     return dataset
      
