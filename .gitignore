@@ -4,6 +4,7 @@ datasets
 *.pth
 *.gz
 wandb
+experiments
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

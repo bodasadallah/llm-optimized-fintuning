@@ -1,167 +1,204 @@
+import pathlib
 from datasets import load_dataset
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, AutoTokenizer
 from transformers import TrainingArguments
 from trl import SFTTrainer
-
-dataset_source = load_dataset('text',data_files="datasets/english/writingPrompts/train.wp_source", split="train")
-dataset_target = load_dataset('text',data_files="datasets/english/writingPrompts/train.wp_target", split="train")
-
-
-dataset_source =  dataset_source.rename_column("text", "source_text")
-dataset_target = dataset_target.rename_column("text", "target_text")
-
-train_dataset = dataset_source.add_column("target_text", dataset_target['target_text']) 
-
-
-
+from evaluate import load
+from peft import LoraConfig, prepare_model_for_kbit_training
+from args_parser import get_args
 import re
-DEFAULT_SYSTEM_PROMPT = """
-Below is a story idea. Write a short story based on this context.
-""".strip()
-
-
-def generate_training_prompt(
-    idea: str, story: str, system_prompt: str = DEFAULT_SYSTEM_PROMPT
-) -> str:
-    return f"""### Instruction: {system_prompt}
-
-### Input:
-{idea.strip()}
-
-### Response:
-{story}
-""".strip()
-     
+from pathlib import Path
+from utils import *
 
 
 
-def clean_text(text):
-    text = re.sub(r"http\S+", "", text)
-    text = re.sub(r"@[^\s]+", "", text)
-    text = re.sub(r"\s+", " ", text)
-    return re.sub(r"\^[^ ]+", "", text)
+if __name__ == "__main__":
+    args = get_args()
+
+    for arg in vars(args):
+        print(arg, getattr(args, arg))
 
 
 
+    if args.model =='english':
+        # Get the english datasets
 
-def generate_text(data_point):
-    idea = clean_text(data_point["source_text"])
-    story = clean_text(data_point["target_text"])
-
-
-    return {
-        "idea": idea,
-        "story": story,
-        "prompt": generate_training_prompt(idea, story),
-    }
-     
-
-train_dataset = train_dataset.map(generate_text, remove_columns=["source_text", "target_text"])
+        print("Loading the english datasets")
+        train_dataset, val_dataset, test_dataset = get_datasets(train_dataset_source_path=args.train_dataset_source_path,
+                                                    train_dataset_target_path=args.train_dataset_target_path,
+                                                    val_dataset_source_path=args.val_dataset_source_path,
+                                                    val_dataset_target_path=args.val_dataset_target_path,
+                                                    test_dataset_source_path=args.test_dataset_source_path,
+                                                    test_dataset_target_path=args.test_dataset_target_path,
+                                                    field = args.field)
 
 
-model_name = "mistralai/Mistral-7B-v0.1"
-
-bnb_config = BitsAndBytesConfig(
-    load_in_4bit=True,
-    bnb_4bit_quant_type="nf4",
-    bnb_4bit_compute_dtype=torch.float16,
-)
-
-model = AutoModelForCausalLM.from_pretrained(
-    model_name,
-    quantization_config=bnb_config,
-    trust_remote_code=True
-)
-# model.config.use_cache = False
-tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
-tokenizer.pad_token = tokenizer.eos_token
-
-output_dir = "./experiments"
-per_device_train_batch_size = 4
-gradient_accumulation_steps = 4
-optim = "paged_adamw_32bit"
-save_steps = 100
-logging_steps = 10
-learning_rate = 2e-4
-max_grad_norm = 0.3
-max_steps = 500
-warmup_ratio = 0.03
-lr_scheduler_type = "constant"
-
-training_arguments = TrainingArguments(
-    output_dir=output_dir,
-    per_device_train_batch_size=per_device_train_batch_size,
-    gradient_accumulation_steps=gradient_accumulation_steps,
-    optim=optim,
-    save_steps=save_steps,
-    logging_steps=logging_steps,
-    learning_rate=learning_rate,
-    fp16=True,
-    max_grad_norm=max_grad_norm,
-    max_steps=max_steps,
-    warmup_ratio=warmup_ratio,
-    group_by_length=True,
-    lr_scheduler_type=lr_scheduler_type,
-    gradient_checkpointing=True,
-)
-
-from peft import LoraConfig
-
-lora_alpha = 16
-lora_dropout = 0.1
-lora_r = 64
+    elif args.model == 'arabic':
+        # Get the arabic datasets
+        print("Loading the arabic datasets")
+        train_dataset, val_dataset, test_dataset = get_arabic_datasets(field = 'prompt')
 
 
-lora_target_modules = [
-    "q_proj",
-    "up_proj",
-    "o_proj",
-    "k_proj",
-    "down_proj",
-    "gate_proj",
-    "v_proj",
-]
 
-peft_config = LoraConfig(
-    lora_alpha=lora_alpha,
-    lora_dropout=lora_dropout,
-    r=lora_r,
-    bias="none",
-    task_type="CAUSAL_LM",
-    target_modules = lora_target_modules
-    # target_modules=[
-    #     "query_key_value",
-    #     "dense",
-    #     "dense_h_to_4h",
-    #     "dense_4h_to_h",
+    model_name = args.model_name
+
+    ## Bits and Bytes config
+    bnb_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        # bnb_4bit_compute_dtype=torch.float16,
+        bnb_4bit_compute_dtype=torch.bfloat16,
+        bnb_4bit_use_double_quant=True
+    )
+
+
+    model = AutoModelForCausalLM.from_pretrained(
+        model_name,
+        quantization_config=bnb_config,
+        trust_remote_code=True,
+        use_flash_attention_2=args.use_flash_attention_2,
+    )
+
+
+    ## Enable gradient checkpointing
+    if args.gradient_checkpointing:
+        model.gradient_checkpointing_enable()
+
+    ## Prepare model for k-bit training
+    # model = prepare_model_for_kbit_training(model)
+
+
+    ## Print the number of trainable parameters
+    print_trainable_parameters(model)
+
+    ## Silence the warnings
+    model.config.use_cache = False
+
+    ## Load the tokenizer
+    tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+    tokenizer.pad_token = tokenizer.eos_token
+    tokenizer.padding_side = 'right'
+
+
+    output_dir = args.output_dir
+
+    per_device_train_batch_size =  args.per_device_train_batch_size
+    per_device_val_batch_size = args.per_device_val_batch_size
+    gradient_accumulation_steps = args.gradient_accumulation_steps
+
+
+    epoch_steps = len(train_dataset) // (per_device_train_batch_size * gradient_accumulation_steps)
+
+
+    optim = args.optim
+
+    save_steps = args.save_steps
+    logging_steps = args.logging_steps
+    learning_rate = args.learning_rate
+    max_grad_norm = args.max_grad_norm
+
+
+
+    print(f"save_steps: {save_steps}")
+    print(f"logging_steps: {logging_steps}")
+
+
+    max_steps = epoch_steps * 10
+
+    warmup_ratio = args.warmup_ratio
+    lr_scheduler_type = args.lr_scheduler_type
+
+
+    output_dir = args.output_dir + f"/{model_name.split('/')[-1]}"
+    loggig_dir = args.logging_dir + f"/{model_name.split('/')[-1]}" + f"/logs"
+    Path(output_dir).mkdir(parents=True, exist_ok=True)
+    Path(loggig_dir).mkdir(parents=True, exist_ok=True)
+    print(f"Saving the model to {output_dir}")
+
+
+    training_arguments = TrainingArguments(
+        output_dir=output_dir,
+        per_device_train_batch_size=per_device_train_batch_size,
+        gradient_accumulation_steps=gradient_accumulation_steps,
+        optim=optim,
+        per_device_eval_batch_size=per_device_val_batch_size,
+        evaluation_strategy=args.evaluation_strategy,
+        do_train=args.do_train,
+        do_eval=args.do_eval,
+        # eval_steps=10,
+        eval_steps=args.eval_steps,
+        run_name=args.run_name,
+        save_steps=save_steps,
+        logging_steps=logging_steps,
+        learning_rate=learning_rate,
+        fp16=True,
+        max_grad_norm=max_grad_norm,
+        max_steps=max_steps,
+        warmup_ratio=warmup_ratio,
+        group_by_length=True,
+        lr_scheduler_type=lr_scheduler_type,
+        report_to=args.report_to,
+        gradient_checkpointing=args.gradient_checkpointing,
+        neftune_noise_alpha=0.1,
+        logging_dir=loggig_dir,
+    )
+
+
+    lora_alpha = args.lora_alpha
+    lora_dropout = args.lora_dropout
+    lora_r = args.lora_r
+
+
+    lora_target_modules = args.lora_target_modules
+    # [
+    #     "q_proj",
+    #     "up_proj",
+    #     "o_proj",
+    #     "k_proj",
+    #     "down_proj",
+    #     "gate_proj",
+    #     "v_proj",
     # ]
-)
+
+    peft_config = LoraConfig(
+        lora_alpha=lora_alpha,
+        lora_dropout=lora_dropout,
+        r=lora_r,
+        bias="none",
+        task_type="CAUSAL_LM",
+        target_modules = lora_target_modules
+    )
 
 
-max_seq_length = 512
+    max_seq_length = args.max_seq_length
 
 
-trainer = SFTTrainer(
-    model=model,
-    train_dataset=train_dataset,
-    peft_config=peft_config,
-    dataset_text_field="prompt",
-    max_seq_length=max_seq_length,
-    tokenizer=tokenizer,
-    args=training_arguments,
-)
+    trainer = SFTTrainer(
+        model=model,
+        train_dataset=train_dataset,
+        eval_dataset=val_dataset,
+        peft_config=peft_config,
+        dataset_text_field=args.field,
+        max_seq_length=max_seq_length,
+        tokenizer=tokenizer,
+        args=training_arguments,
+    )
 
 
-for name, module in trainer.model.named_modules():
-    if "norm" in name:
-        module = module.to(torch.float32)
+    for name, module in trainer.model.named_modules():
+        if "norm" in name:
+            module = module.to(torch.float32)
 
 
-trainer.train()
+    if args.checkpoint_path:
+        trainer.train(resume_from_checkpoint=args.checkpoint_path)
+    else:
+        trainer.train()
 
-trainer.save_model()
+
+    # trainer.save_model()
 
 
-print("Done training")
-print(trainer.model)
+    print("Done training")
+    print(trainer.model)
