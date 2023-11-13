@@ -21,17 +21,22 @@ if __name__ == "__main__":
 
 
 
-    if args.english:
+    if args.model =='english':
         # Get the english datasets
-        train_dataset, val_dataset = get_datasets(train_dataset_source_path=args.train_dataset_source_path,
-                                                     train_dataset_target_path=args.train_dataset_target_path,
-                                                     val_dataset_source_path=args.val_dataset_source_path,
-                                                     val_dataset_target_path=args.val_dataset_target_path,
-                                                     field = args.field)
+
+        print("Loading the english datasets")
+        train_dataset, val_dataset, test_dataset = get_datasets(train_dataset_source_path=args.train_dataset_source_path,
+                                                    train_dataset_target_path=args.train_dataset_target_path,
+                                                    val_dataset_source_path=args.val_dataset_source_path,
+                                                    val_dataset_target_path=args.val_dataset_target_path,
+                                                    test_dataset_source_path=args.test_dataset_source_path,
+                                                    test_dataset_target_path=args.test_dataset_target_path,
+                                                    field = args.field)
 
 
-    else:
+    elif args.model == 'arabic':
         # Get the arabic datasets
+        print("Loading the arabic datasets")
         train_dataset, val_dataset, test_dataset = get_arabic_datasets(field = 'prompt')
 
 
@@ -46,6 +51,7 @@ if __name__ == "__main__":
         bnb_4bit_compute_dtype=torch.bfloat16,
         bnb_4bit_use_double_quant=True
     )
+
 
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
