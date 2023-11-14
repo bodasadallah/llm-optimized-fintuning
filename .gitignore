@@ -5,6 +5,7 @@ datasets
 *.gz
 wandb
 experiments
+junk
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
