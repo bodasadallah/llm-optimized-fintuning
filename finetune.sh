@@ -37,10 +37,10 @@ python train.py \
 --run_name=$MODEL_NAME \
 --per_device_train_batch_size=4 \
 --per_device_val_batch_size=4 \
---gradient_accumulation_steps=2 \
---gradient_checkpointing=1 \
 --model="english" \
 --checkpoint_path="experiments/Llama-2-7b-hf/checkpoint-24000"
+# --gradient_accumulation_steps=2 \
+# --gradient_checkpointing=1 \
 # --use_flash_attention_2=1 \
 # --lora_target_modules "c_attn" "c_proj"
 
