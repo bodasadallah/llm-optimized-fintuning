@@ -1,6 +1,6 @@
 # from datasets import load_dataset
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer # LlamaTokenizer, BitsAndBytesConfig, 
+from transformers import AutoModelForCausalLM, AutoTokenizer#, BitsAndBytesConfig # LlamaTokenizer, 
 # from transformers import TrainingArguments
 # from trl import SFTTrainer
 # from evaluate import load
@@ -19,15 +19,17 @@ from evaluate import load
 tmp=0.9
 top_p=0.6
 max_length=512
+batch_size=8
 
 if __name__ == "__main__":
 
     bertscore = load("bertscore")
     args = get_args()
+    model_name = args.model_name
 
     
-    for arg in vars(args):
-        print(arg, getattr(args, arg))
+    # for arg in vars(args):
+    #     print(arg, getattr(args, arg))
     
 
     dataset = get_dataset(
@@ -35,13 +37,12 @@ if __name__ == "__main__":
     )
     # dataset.cleanup_cache_files()
 
-    model_name = args.model_name
 
 
     print("1. Loaded dataset.")
 
 
-    ## Bits and Bytes config
+    # # Bits and Bytes config
     # bnb_config = BitsAndBytesConfig(
     #     load_in_4bit=True,
     #     bnb_4bit_quant_type=args.bnb_4bit_quant_type,
@@ -73,44 +74,66 @@ if __name__ == "__main__":
     print(f"Saving the model to {output_dir}")
 
 
+    
+    dataset.set_format(type="torch")
+    dataloader = torch.utils.data.DataLoader(
+        dataset, batch_size=batch_size
+    )
+
+    
     pres = []
     reca = []
     f1 = []
-    print(len(dataset['idea']))
-    for i, source in tqdm(enumerate(dataset['idea']), total=len(dataset['idea'])):
+    i = 0
+    for batch in tqdm(dataloader): # ['idea', 'story', 'prompt']
         
-        inputs = tokenizer(source, padding=True, return_tensors="pt").to('cuda') # padding=True,
+        inputs = tokenizer(batch["prompt"], padding=True, return_tensors="pt").to('cuda')
 
-        with torch.inference_mode():
+        # with torch.inference_mode():
+        #     outputs = model.generate(
+        #         **inputs, max_new_tokens=max_length, do_sample=True,
+        #         top_p=top_p, temperature=tmp,
+        #     )
+
+
+        with torch.no_grad():
             outputs = model.generate(
                 **inputs, max_new_tokens=max_length, do_sample=True,
                 top_p=top_p, temperature=tmp,
             )
 
-        decode = tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-        res = decode.split('Response:')[-1]
-        # res = res.replace('<newline> ', '\n')
+        # Step 4: Decode the generated output IDs back to text
+        generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
 
-        result = bertscore.compute(predictions=[res], references=[dataset['story'][i]],
+        # res = tokenizer.decode(o, skip_special_tokens=True)
+
+        generated_texts = [res.split('Response:')[-1] for res in generated_texts]
+
+        # print(len(generated_texts), len(batch['story']))
+        # print(generated_texts)
+
+        result = bertscore.compute(predictions=generated_texts, references=batch['story'],
                                             lang="en") # precision, recall, F1
 
-        pres.append(result['precision'][0])
-        reca.append(result['recall'][0])
-        f1.append(result['f1'][0])
+        pres.extend(result['precision'])
+        reca.extend(result['recall'])
+        f1.extend(result['f1'])
 
-        if i < 4:
-            print(len(res), len(dataset['story'][i]))
-            print(source)
+        if i < 2:
             print(pres)
             print(reca)
             print(f1)
             
 
         with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore.txt', 'a') as f:
-            f.write(str(result['precision'][0]) + ' ' + str(result['recall'][0]) + ' ' + str(result['f1'][0]) + '\n')
+            f.write(' '.join(list(map(str, pres[i*batch_size:(i+1)*batch_size]))) + '\n' +
+                    ' '.join(list(map(str, reca[i*batch_size:(i+1)*batch_size]))) + '\n' +
+                    ' '.join(list(map(str, f1[i*batch_size:(i+1)*batch_size]))) + '\n\n')
             f.flush()
+
+        i += 1
+
 
     bert = sum(f1) / len(f1)
     print("Average BERT Score: ", bert)
