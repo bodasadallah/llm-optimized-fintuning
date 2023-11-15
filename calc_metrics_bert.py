@@ -19,7 +19,7 @@ from evaluate import load
 tmp=0.9
 top_p=0.6
 max_length=512
-batch_size=8
+batch_size=16
 
 if __name__ == "__main__":
 
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     dataset = get_dataset(
         args.source_path, args.target_path, field="prompt", prompt_only=True
     )
-    # dataset.cleanup_cache_files()
+    dataset.cleanup_cache_files()
 
 
 
@@ -81,28 +81,21 @@ if __name__ == "__main__":
     )
 
     
-    pres = []
-    reca = []
-    f1 = []
+    pres = 0
+    reca = 0
+    f1 = 0
     i = 0
     for batch in tqdm(dataloader): # ['idea', 'story', 'prompt']
         
         inputs = tokenizer(batch["prompt"], padding=True, return_tensors="pt").to('cuda')
 
-        # with torch.inference_mode():
-        #     outputs = model.generate(
-        #         **inputs, max_new_tokens=max_length, do_sample=True,
-        #         top_p=top_p, temperature=tmp,
-        #     )
-
-
-        with torch.no_grad():
+        # with torch.no_grad():
+        with torch.inference_mode():
             outputs = model.generate(
                 **inputs, max_new_tokens=max_length, do_sample=True,
                 top_p=top_p, temperature=tmp,
             )
 
-        # Step 4: Decode the generated output IDs back to text
         generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
 
@@ -116,27 +109,27 @@ if __name__ == "__main__":
         result = bertscore.compute(predictions=generated_texts, references=batch['story'],
                                             lang="en") # precision, recall, F1
 
-        pres.extend(result['precision'])
-        reca.extend(result['recall'])
-        f1.extend(result['f1'])
+        pres += sum(result['precision'])
+        reca += sum(result['recall'])
+        f1 += sum(result['f1'])
 
         if i < 2:
             print(pres)
             print(reca)
             print(f1)
             
-
-        with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore.txt', 'a') as f:
-            f.write(' '.join(list(map(str, pres[i*batch_size:(i+1)*batch_size]))) + '\n' +
-                    ' '.join(list(map(str, reca[i*batch_size:(i+1)*batch_size]))) + '\n' +
-                    ' '.join(list(map(str, f1[i*batch_size:(i+1)*batch_size]))) + '\n\n')
-            f.flush()
+        if i % 10 == 0:
+            with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore.txt', 'a') as f:
+                f.write(str(i+1) + ' ' + str(pres) + ' ' + str(reca) + ' ' + str(f1) + '\n')
+                # f.write(' '.join(list(map(str, pres[(i-2)*batch_size:(i+1)*batch_size]))) + '\n' +
+                #         ' '.join(list(map(str, reca[(i-2)*batch_size:(i+1)*batch_size]))) + '\n' +
+                #         ' '.join(list(map(str, f1[(i-2)*batch_size:(i+1)*batch_size]))) + '\n\n')
+                f.flush()
 
         i += 1
 
 
-    bert = sum(f1) / len(f1)
-    print("Average BERT Score: ", bert)
+    print("Average BERT Score: ", f1/i)
 
 
 
