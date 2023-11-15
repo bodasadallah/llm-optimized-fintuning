@@ -129,7 +129,7 @@ if __name__ == "__main__":
         i += 1
 
 
-    print("Average BERT Score: ", f1/i)
+    print("Average BERT Score: ", pres / (i*batch_size))
 
 
 
