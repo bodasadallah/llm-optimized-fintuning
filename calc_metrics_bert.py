@@ -24,10 +24,11 @@ if __name__ == "__main__":
 
     bertscore = load("bertscore")
     args = get_args()
+
     
     for arg in vars(args):
         print(arg, getattr(args, arg))
-
+    
 
     dataset = get_dataset(
         args.source_path, args.target_path, field="prompt", prompt_only=True
@@ -72,9 +73,12 @@ if __name__ == "__main__":
     print(f"Saving the model to {output_dir}")
 
 
-    bert = []
-    for i, source in tqdm(enumerate(dataset['idea'])):
-            
+    pres = []
+    reca = []
+    f1 = []
+    print(len(dataset['idea']))
+    for i, source in tqdm(enumerate(dataset['idea']), total=len(dataset['idea'])):
+        
         inputs = tokenizer(source, padding=True, return_tensors="pt").to('cuda') # padding=True,
 
         with torch.inference_mode():
@@ -92,59 +96,24 @@ if __name__ == "__main__":
         result = bertscore.compute(predictions=[res], references=[dataset['story'][i]],
                                             lang="en") # precision, recall, F1
 
-        P, R, F1 = result['precision'], result['recall'], result['f1']
-        
+        pres.append(result['precision'][0])
+        reca.append(result['recall'][0])
+        f1.append(result['f1'][0])
+
         if i < 4:
             print(len(res), len(dataset['story'][i]))
             print(source)
-            print(res)
-            print(P)
-            print(R)
-            print(F1)
-
-        else:
-            break
+            print(pres)
+            print(reca)
+            print(f1)
             
-            
-        
 
+        with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore.txt', 'a') as f:
+            f.write(str(result['precision'][0]) + ' ' + str(result['recall'][0]) + ' ' + str(result['f1'][0]) + '\n')
+            f.flush()
 
-    print("BERT Score: ", bert)
-
-
-
-
-    # dataset.set_format(type="torch")
-    # dataloader = torch.utils.data.DataLoader(
-    #     dataset, batch_size=args.per_device_val_batch_size
-    # )
-
-    # bert = []
-    # i = 0
-    # for batch in tqdm(dataloader):
-    #     for source in batch["prompt"]:
-
-    #         inputs = tokenizer(source, padding=True, return_tensors="pt").to('cuda') # padding=True,
-
-    #         with torch.inference_mode():
-    #             outputs = model.generate(
-    #                 **inputs, max_new_tokens=max_length, do_sample=True,
-    #                 top_p=top_p, temperature=tmp,
-    #             )
-
-    #         decode = tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-    #         res = decode.split('Response:')[-1]
-    #         res = res.replace('<newline> ', '\n')
-
-    #         if i < 4:
-    #             print(source)
-    #             print(res)
-                
-    #             i+=1
-    #         else:
-    #             break
-            
+    bert = sum(f1) / len(f1)
+    print("Average BERT Score: ", bert)
 
 
 
