@@ -28,19 +28,18 @@ WANDB_PROJECT=llm_finetuning
 echo $WANDB_PROJECT
 python train.py \
 --save_steps=1000 \
---eval_steps=10000 \
+--eval_steps=100 \
 --do_eval=1 \
 --report_to="all" \
---logging_steps=100 \
+--logging_steps=500 \
 --logging_dir="experiments/$MODEL_NAME" \
 --model_name=$MODEL_NAME \
 --run_name=$MODEL_NAME \
 --per_device_train_batch_size=4 \
---per_device_val_batch_size=2 \
+--per_device_val_batch_size=4 \
 --model="english" \
 --gradient_accumulation_steps=2 \
 --gradient_checkpointing=1 \
---learning_rate=2e-5 \
 --checkpoint_path="experiments/Llama-2-7b-hf/checkpoint-24000"
 
 # --eval_steps=10000 \

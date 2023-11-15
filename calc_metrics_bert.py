@@ -10,6 +10,7 @@ from args_parser import get_args
 from pathlib import Path
 from utils import *
 from tqdm import tqdm
+from evaluate import load
 
 # if you need to update datasets from cache, run once with next two lines uncommented
 # from datasets import set_caching_enabled
@@ -20,6 +21,8 @@ top_p=0.6
 max_length=512
 
 if __name__ == "__main__":
+
+    bertscore = load("bertscore")
     args = get_args()
     
     for arg in vars(args):
@@ -32,6 +35,7 @@ if __name__ == "__main__":
     # dataset.cleanup_cache_files()
 
     model_name = args.model_name
+
 
     print("1. Loaded dataset.")
 
@@ -68,48 +72,85 @@ if __name__ == "__main__":
     print(f"Saving the model to {output_dir}")
 
 
-    dataset.set_format(type="torch")
-    dataloader = torch.utils.data.DataLoader(
-        dataset, batch_size=args.per_device_val_batch_size
-    )
-
     bert = []
-    i = 0
-    for batch in tqdm(dataloader):
-        for source in batch["prompt"]:
+    for i, source in tqdm(enumerate(dataset['idea'])):
+            
+        inputs = tokenizer(source, padding=True, return_tensors="pt").to('cuda') # padding=True,
 
-            inputs = tokenizer(source, padding=True, return_tensors="pt").to('cuda') # padding=True,
+        with torch.inference_mode():
+            outputs = model.generate(
+                **inputs, max_new_tokens=max_length, do_sample=True,
+                top_p=top_p, temperature=tmp,
+            )
 
-            with torch.inference_mode():
-                outputs = model.generate(
-                    **inputs, max_new_tokens=max_length, do_sample=True,
-                    top_p=top_p, temperature=tmp,
-                )
+        decode = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
-            decode = tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-            res = decode.split('Response:')[-1]
-            res = res.replace('<newline> ', '\n')
-
-            if i < 4:
-                print(source)
-                print(res)
-                
-                i+=1
-            else:
-                break
+        res = decode.split('Response:')[-1]
+        # res = res.replace('<newline> ', '\n')
 
 
-        # tok.decode(outputs[0][inputs_length:], skip_special_tokens=True)
-        # with torch.no_grad():
-        #     model_output = model(outputs, labels=outputs)
+        result = bertscore.compute(predictions=[res], references=[dataset['story'][i]],
+                                            lang="en") # precision, recall, F1
 
-        #     neg_log_likelihood = model_output.loss
+        P, R, F1 = result['precision'], result['recall'], result['f1']
+        
+        if i < 4:
+            print(len(res), len(dataset['story'][i]))
+            print(source)
+            print(res)
+            print(P)
+            print(R)
+            print(F1)
 
-        # nlls.append(neg_log_likelihood)
-
-    # ppl = torch.exp(torch.stack(nlls).mean())
+        else:
+            break
+            
+            
+        
 
 
     print("BERT Score: ", bert)
 
+
+
+
+    # dataset.set_format(type="torch")
+    # dataloader = torch.utils.data.DataLoader(
+    #     dataset, batch_size=args.per_device_val_batch_size
+    # )
+
+    # bert = []
+    # i = 0
+    # for batch in tqdm(dataloader):
+    #     for source in batch["prompt"]:
+
+    #         inputs = tokenizer(source, padding=True, return_tensors="pt").to('cuda') # padding=True,
+
+    #         with torch.inference_mode():
+    #             outputs = model.generate(
+    #                 **inputs, max_new_tokens=max_length, do_sample=True,
+    #                 top_p=top_p, temperature=tmp,
+    #             )
+
+    #         decode = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+    #         res = decode.split('Response:')[-1]
+    #         res = res.replace('<newline> ', '\n')
+
+    #         if i < 4:
+    #             print(source)
+    #             print(res)
+                
+    #             i+=1
+    #         else:
+    #             break
+            
+
+
+
+### To plot pairwise cosine similarity
+# from bert_score import plot_example
+
+# cand = cands[0]
+# ref = refs[0]
+# plot_example(cand, ref, lang="en")

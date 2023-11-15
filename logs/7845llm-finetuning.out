@@ -6,13 +6,13 @@ use_flash_attention_2 False
 report_to all
 max_steps 10000
 save_steps 1000
-logging_steps 500
+logging_steps 100
 max_seq_length 512
 checkpoint_path experiments/Llama-2-7b-hf/checkpoint-24000
 do_eval True
 do_train False
 evaluation_strategy steps
-eval_steps 100
+eval_steps 10000
 log_level info
 logging_strategy steps
 save_total_limit 10
@@ -30,10 +30,10 @@ field prompt
 model_name meta-llama/Llama-2-7b-hf
 output_dir ./experiments
 per_device_train_batch_size 4
-per_device_val_batch_size 4
+per_device_val_batch_size 2
 gradient_accumulation_steps 2
 optim paged_adamw_32bit
-learning_rate 0.0002
+learning_rate 2e-05
 max_grad_norm 0.3
 warmup_ratio 0.03
 lr_scheduler_type constant
@@ -51,17 +51,5 @@ lora_target_modules ['q_proj', 'up_proj', 'o_proj', 'k_proj', 'down_proj', 'gate
 Loading the english datasets
 trainable params: 262410240 || all params: 3500412928 || trainable%: 7.496550989769399
 save_steps: 1000
-logging_steps: 500
+logging_steps: 100
 Saving the model to ./experiments/Llama-2-7b-hf
-{'loss': 1.6833, 'learning_rate': 0.0002, 'epoch': 0.72}
-{'loss': 1.6945, 'learning_rate': 0.0002, 'epoch': 0.73}
-{'loss': 1.6949, 'learning_rate': 0.0002, 'epoch': 0.75}
-{'loss': 1.7031, 'learning_rate': 0.0002, 'epoch': 0.76}
-{'loss': 1.7014, 'learning_rate': 0.0002, 'epoch': 0.78}
-{'loss': 1.7014, 'learning_rate': 0.0002, 'epoch': 0.79}
-{'loss': 1.7089, 'learning_rate': 0.0002, 'epoch': 0.81}
-{'loss': 1.7107, 'learning_rate': 0.0002, 'epoch': 0.82}
-{'loss': 1.7178, 'learning_rate': 0.0002, 'epoch': 0.84}
-{'loss': 1.7104, 'learning_rate': 0.0002, 'epoch': 0.85}
-{'loss': 1.7097, 'learning_rate': 0.0002, 'epoch': 0.87}
-{'loss': 1.7203, 'learning_rate': 0.0002, 'epoch': 0.88}
