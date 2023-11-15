@@ -6,7 +6,7 @@
 #SBATCH --time=24:00:00 # 10 hours of wall time
 #SBATCH --nodes=1  # 1 GPU node
 #SBATCH --mem=46000 # 32 GB of RAM
-#SBATCH --nodelist=ws-l5-006
+#SBATCH --nodelist=ws-l5-008
 
 
 echo "starting......................."
@@ -17,7 +17,7 @@ echo "starting......................."
 
 
 
-# MODEL_NAME="meta-llama/Llama-2-7b-hf"
+MODEL_NAME="Llama-2-7b-hf-bertscore"
 
 # MODEL_NAME="/home/abdelrahman.sadallah/.cache/huggingface/hub/jais"
 # MODEL_NAME="mistralai/Mistral-7B-v0.1"

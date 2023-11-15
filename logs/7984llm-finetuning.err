@@ -1,0 +1,6 @@
+/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/datasets/table.py:1387: FutureWarning: promote has been superseded by mode='default'.
+  return cls._concat_blocks(pa_tables_to_concat_vertically, axis=0)
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:19<00:19, 19.15s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:25<00:00, 11.81s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:25<00:00, 12.91s/it]
+  0%|          | 0/947 [00:00<?, ?it/s]Some weights of RobertaModel were not initialized from the model checkpoint at roberta-large and are newly initialized: ['roberta.pooler.dense.bias', 'roberta.pooler.dense.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+  4%|▍         | 42/947 [02:43<58:40,  3.89s/it]  5%|▍         | 43/947 [05:19<2:14:12,  8.91s/it]  5%|▍         | 44/947 [07:56<3:54:12, 15.56s/it]  5%|▍         | 45/947 [10:34<6:02:29, 24.11s/it]
