@@ -54,14 +54,14 @@ if __name__ == "__main__":
     )
 
     # Skip N batchs
-    for _ in itertools.islice(dataloader, 40): ### ??????????????
+    for _ in itertools.islice(dataloader, 530): ### ??????????????
         pass
 
     
-    pres = 529.4851740002632 #0
-    reca = 524.537389934063 #0
-    f1 = 526.7670214772224 #0
-    i = 41 #0
+    pres = 6843.0493054986 #0
+    reca = 6788.930298566818 #0
+    f1 = 6812.753372192383 #0
+    i = 531 #0
     for batch in tqdm(dataloader): # ['idea', 'story', 'prompt']
         
         # if i >= 41:
@@ -103,6 +103,9 @@ if __name__ == "__main__":
         # else:
         #     i += 1
 
-
+    with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore.txt', 'a') as f:
+                f.write(str(i) + ' ' + str(pres) + ' ' + str(reca) + ' ' + str(f1) + '\n')
+                f.flush()
+                
     print("Average BERT Score: ", pres / (i*batch_size))
 
