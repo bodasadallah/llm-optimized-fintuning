@@ -2,7 +2,7 @@ import torch
 from peft import PeftModel    
 from transformers import AutoModelForCausalLM, AutoTokenizer, LlamaTokenizer, StoppingCriteria, StoppingCriteriaList, TextIteratorStreamer
 
-adapters_name  = "experiments/Llama-2-7b-hf/checkpoint-16000"
+adapters_name  = "experiments/Llama-2-7b-hf/checkpoint-24000"
 model_name = "meta-llama/Llama-2-7b-hf"
 
 

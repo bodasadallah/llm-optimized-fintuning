@@ -16,7 +16,6 @@ echo "starting......................."
 # --model_name='mistralai/Mistral-7B-v0.1' \
 
 
-
 # MODEL_NAME="meta-llama/Llama-2-7b-hf"
 MODEL_NAME="mistralai/Mistral-7B-v0.1"
 
@@ -33,6 +32,9 @@ python train.py \
 --logging_dir="experiments/$MODEL_NAME" \
 --model_name=$MODEL_NAME \
 --run_name=$MODEL_NAME \
+--gradient_accumulation_steps=2 \
+--gradient_checkpointing=1 \
+--use_flash_attention_2=1 \
 --per_device_train_batch_size=16 \
 --checkpoint_path="experiments/Mistral-7B-v0.1/checkpoint-21000"
 --use_flash_attention_2=1 \

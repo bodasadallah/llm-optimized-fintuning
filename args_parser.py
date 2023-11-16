@@ -12,9 +12,10 @@ def add_args(parser: argparse.ArgumentParser):
     parser.add_argument('--logging_dir',
                             type=str,
                             default="./logs")
-    parser.add_argument('--english',
-                            type=bool,
-                            default=True)
+    parser.add_argument('--model',
+                            type= str,
+                            choices=['english', 'arabic'],
+                            default="english")
     
     parser.add_argument('--use_flash_attention_2',
                             type=bool,
@@ -147,7 +148,7 @@ def add_args(parser: argparse.ArgumentParser):
                             default=True)
     parser.add_argument('--gradient_checkpointing',
                             type=bool,
-                            default=True)
+                            default=False)
     
     
 
@@ -169,7 +170,8 @@ def add_args(parser: argparse.ArgumentParser):
                             type=str,
                             default="CAUSAL_LM")
     parser.add_argument('--lora_target_modules',
-                            type=list,
+                            type=str,
+                            nargs='+',
                             default=[
                                 "q_proj",
                                 "up_proj",
