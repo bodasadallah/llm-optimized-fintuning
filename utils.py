@@ -88,6 +88,8 @@ def get_dataset(source_path, target_path, field='prompt', prompt_only=False):
         remove_columns=["source_text", "target_text"], 
     )
 
+    dataset.remove_columns(["idea", "story"])
+
     return dataset
      
 
