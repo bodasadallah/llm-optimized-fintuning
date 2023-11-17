@@ -6,12 +6,12 @@ from pathlib import Path
 from utils import *
 from tqdm import tqdm
 from evaluate import load
-import itertools
+# import itertools
 
 tmp=0.9
 top_p=0.6
 max_length=512
-batch_size=16
+batch_size=64 #16
 
 if __name__ == "__main__":
 
@@ -34,7 +34,8 @@ if __name__ == "__main__":
         device_map='auto'
     )
     model = PeftModel.from_pretrained(model, args.checkpoint_path)
-    tokenizer = AutoTokenizer.from_pretrained(model_name) # LlamaTokenizer
+    # model = PeftModel.from_pretrained(model) # Baseline
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
     tokenizer.bos_token_id = 1
     tokenizer.pad_token = tokenizer.eos_token
     stop_token_ids = [0]
@@ -53,55 +54,54 @@ if __name__ == "__main__":
         dataset, batch_size=batch_size
     )
 
-    # Skip N batchs
-    for _ in itertools.islice(dataloader, 530): ### ??????????????
-        pass
-
-    
-    pres = 6843.0493054986 #0
-    reca = 6788.930298566818 #0
-    f1 = 6812.753372192383 #0
-    i = 531 #0
+    # # Skip N batchs
+    # for _ in itertools.islice(dataloader, 530): ### ??????????????
+    #     pass
+ 
+    pres = 0
+    reca = 0
+    f1 = 0
+    i = 0
     for batch in tqdm(dataloader): # ['idea', 'story', 'prompt']
         
-        # if i >= 41:
+        if i >= 161:
 
-        inputs = tokenizer(batch["prompt"], padding=True, return_tensors="pt").to('cuda')
+            inputs = tokenizer(batch["prompt"], padding=True, return_tensors="pt").to('cuda')
 
-        # with torch.no_grad():
-        with torch.inference_mode():
-            outputs = model.generate(
-                **inputs, max_new_tokens=max_length, do_sample=True,
-                top_p=top_p, temperature=tmp,
-            )
+            # with torch.no_grad():
+            with torch.inference_mode():
+                outputs = model.generate(
+                    **inputs, max_new_tokens=max_length, do_sample=True,
+                    top_p=top_p, temperature=tmp,
+                )
 
-        generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
-        generated_texts = [res.split('Response:')[-1] for res in generated_texts]
+            generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
+            generated_texts = [res.split('Response:')[-1] for res in generated_texts]
 
-        # print(len(generated_texts), len(batch['story']))
-        # print(generated_texts)
+            # print(len(generated_texts), len(batch['story']))
+            # print(generated_texts)
 
-        result = bertscore.compute(predictions=generated_texts, references=batch['story'],
-                                            lang="en") # precision, recall, F1
+            result = bertscore.compute(predictions=generated_texts, references=batch['story'],
+                                                lang="en") # precision, recall, F1
 
-        pres += sum(result['precision'])
-        reca += sum(result['recall'])
-        f1 += sum(result['f1'])
+            pres += sum(result['precision'])
+            reca += sum(result['recall'])
+            f1 += sum(result['f1'])
 
-        if i < 2:
-            print(pres)
-            print(reca)
-            print(f1)
-            
-        if i % 10 == 0:
-            with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore.txt', 'a') as f:
-                f.write(str(i+1) + ' ' + str(pres) + ' ' + str(reca) + ' ' + str(f1) + '\n')
-                f.flush()
+            if i < 2:
+                print(pres)
+                print(reca)
+                print(f1)
+                
+            if i % 10 == 0:
+                with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore.txt', 'a') as f:
+                    f.write(str(i+1) + ' ' + str(pres) + ' ' + str(reca) + ' ' + str(f1) + '\n')
+                    f.flush()
 
-        i += 1
+            i += 1
 
-        # else:
-        #     i += 1
+        else:
+            i += 1
 
     with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore.txt', 'a') as f:
                 f.write(str(i) + ' ' + str(pres) + ' ' + str(reca) + ' ' + str(f1) + '\n')

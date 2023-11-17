@@ -18,7 +18,7 @@ MODEL_NAME="Llama-2-7b-hf"
 
 
 echo $MODEL_NAME
-python calc_metrics_bert.py --checkpoint_path="experiments/Llama-2-7b-hf/checkpoint-24000"
+python calc_metrics_bert_copy.py
 
 # # --checkpoint_path="experiments/Mistral-7B-v0.1/checkpoint-24000" 
 

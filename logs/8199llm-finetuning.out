@@ -3,3 +3,5 @@ llm_finetuning_bert
 1. Loaded dataset.
 2. Successfully loaded the model meta-llama/Llama-2-7b-hf into memory
 Saving the model to ./experiments/Llama-2-7b-hf
+Average BERT Score:  0.8048652100053232
+ ending 
