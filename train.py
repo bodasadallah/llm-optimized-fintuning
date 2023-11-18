@@ -10,6 +10,7 @@ from args_parser import get_args
 import re
 from pathlib import Path
 from utils import *
+from peft import PeftModel    
 
 
 
@@ -58,7 +59,12 @@ if __name__ == "__main__":
         quantization_config=bnb_config,
         trust_remote_code=True,
         use_flash_attention_2=args.use_flash_attention_2,
+        device_map='auto'
     )
+
+
+    # adapters_name  = "experiments/jais/checkpoint-22000"
+    # model = PeftModel.from_pretrained(model, adapters_name)
 
 
     ## Enable gradient checkpointing
@@ -66,7 +72,7 @@ if __name__ == "__main__":
         model.gradient_checkpointing_enable()
 
     ## Prepare model for k-bit training
-    # model = prepare_model_for_kbit_training(model)
+    # model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=False)
 
 
     ## Print the number of trainable parameters
@@ -132,7 +138,7 @@ if __name__ == "__main__":
         save_steps=save_steps,
         logging_steps=logging_steps,
         learning_rate=learning_rate,
-        fp16=True,
+        fp16=False,
         max_grad_norm=max_grad_norm,
         max_steps=max_steps,
         warmup_ratio=warmup_ratio,

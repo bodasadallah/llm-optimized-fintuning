@@ -35,30 +35,27 @@ def generate_training_prompt(
 
     ## For training, we need to provide the system prompt, the idea and the story
     if train:
-        return f"""### Instruction: {system_prompt}
+        return f"""
+### Instruction: {system_prompt}
 
-    ### Input:
-    {idea.strip()}
+### Input:
+{idea.strip()}
 
-    ### Response:
-    {story}
+### Response:
+{story}
 """.strip()
     
     ## For validation and testing, we only need to provide the idea
     else:
-        # print("in generating")
-        # print(system_prompt)
-        # print(f"""### Instruction: {system_prompt}
+        return f"""
+### Instruction: {system_prompt}
 
-#     ### Input:
-#     {idea.strip()}
-# """.strip())
-        return f"""### Instruction: {system_prompt}
+### Input:
+{idea.strip()}
 
-    ### Input:
-    {idea.strip()}
+### Response:
+{story}
 """.strip()
-
 
 def generate_text(data_point, field, train):
     idea = clean_text(data_point["source_text"])
@@ -166,23 +163,28 @@ def generate_arabic_training_prompt(
     example['poem'] = poem
 
     if train:
-        example[field] = f"""### Instruction: {DEFAULT_ARABIC_SYSTEM_PROMPT}
+        example[field] = f"""
+### Instruction: {DEFAULT_ARABIC_SYSTEM_PROMPT}
 
-    ### Input:
-    {title.strip()} , {era.strip()}
+### Input:
+{title.strip()} , {era.strip()}
 
-    ### Response:
-    {poem}
-    """.strip()
+### Response:
+{poem}
+""".strip()
 
 
     else:
 
-        example[field] =  f"""### Instruction: {DEFAULT_ARABIC_SYSTEM_PROMPT}
+        example[field] =  f"""
+### Instruction: {DEFAULT_ARABIC_SYSTEM_PROMPT}
 
-    ### Input:
-    {title.strip()} , {era.strip()}
-    """.strip()  
+### Input:
+{title.strip()} , {era.strip()}
+
+### Response:
+{poem}
+""".strip()  
 
     return example
 

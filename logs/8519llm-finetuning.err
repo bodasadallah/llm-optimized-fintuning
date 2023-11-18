@@ -1,0 +1,32 @@
+Loading checkpoint shards:   0%|          | 0/6 [00:00<?, ?it/s]Loading checkpoint shards:  17%|█▋        | 1/6 [02:05<10:26, 125.29s/it]Loading checkpoint shards:  33%|███▎      | 2/6 [02:30<04:25, 66.26s/it] Loading checkpoint shards:  50%|█████     | 3/6 [03:18<02:53, 57.92s/it]Loading checkpoint shards:  67%|██████▋   | 4/6 [04:20<01:59, 59.60s/it]Loading checkpoint shards:  83%|████████▎ | 5/6 [04:47<00:48, 48.03s/it]Loading checkpoint shards: 100%|██████████| 6/6 [04:55<00:00, 34.25s/it]Loading checkpoint shards: 100%|██████████| 6/6 [04:55<00:00, 49.23s/it]
+wandb: Currently logged in as: bodasadallah2. Use `wandb login --relogin` to force relogin
+wandb: wandb version 0.16.0 is available!  To upgrade, please run:
+wandb:  $ pip install wandb --upgrade
+wandb: Tracking run with wandb version 0.15.12
+wandb: Run data is saved locally in /home/abdelrahman.sadallah/mbzuai/llm-optimized-fintuning/wandb/run-20231117_215306-62i9liid
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run /home/abdelrahman.sadallah/.cache/huggingface/hub/jais
+wandb: ⭐️ View project at https://wandb.ai/bodasadallah2/huggingface
+wandb: 🚀 View run at https://wandb.ai/bodasadallah2/huggingface/runs/62i9liid
+  0%|          | 0/1699990 [00:00<?, ?it/s]You're using a PreTrainedTokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to encode the text followed by a call to the `pad` method to get a padded encoding.
+Traceback (most recent call last):
+  File "/home/abdelrahman.sadallah/mbzuai/llm-optimized-fintuning/train.py", line 203, in <module>
+    trainer.train()
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/transformers/trainer.py", line 1556, in train
+    return inner_training_loop(
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/transformers/trainer.py", line 1861, in _inner_training_loop
+    tr_loss_step = self.training_step(model, inputs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/transformers/trainer.py", line 2735, in training_step
+    self.accelerator.backward(loss)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/accelerate/accelerator.py", line 1989, in backward
+    loss.backward(**kwargs)
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/torch/_tensor.py", line 487, in backward
+    torch.autograd.backward(
+  File "/home/abdelrahman.sadallah/.conda/envs/nlp/lib/python3.10/site-packages/torch/autograd/__init__.py", line 200, in backward
+    Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+RuntimeError: element 0 of tensors does not require grad and does not have a grad_fn
+wandb: Waiting for W&B process to finish... (failed 1). Press Control-C to abort syncing.
+wandb: - 0.005 MB of 0.005 MB uploaded (0.000 MB deduped)wandb: \ 0.005 MB of 0.005 MB uploaded (0.000 MB deduped)wandb: | 0.005 MB of 0.005 MB uploaded (0.000 MB deduped)wandb: / 0.005 MB of 0.005 MB uploaded (0.000 MB deduped)wandb: 🚀 View run /home/abdelrahman.sadallah/.cache/huggingface/hub/jais at: https://wandb.ai/bodasadallah2/huggingface/runs/62i9liid
+wandb: ️⚡ View job at https://wandb.ai/bodasadallah2/huggingface/jobs/QXJ0aWZhY3RDb2xsZWN0aW9uOjExMjEzMTgxMg==/version_details/v14
+wandb: Synced 5 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20231117_215306-62i9liid/logs
