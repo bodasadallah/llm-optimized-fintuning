@@ -24,7 +24,7 @@ WANDB_PROJECT=llm_finetuning
 
 echo $WANDB_PROJECT
 python train.py \
---save_steps=1000 \
+--save_steps=80 \
 --eval_steps=10000 \
 --do_eval=1 \
 --report_to="all" \
@@ -34,10 +34,11 @@ python train.py \
 --run_name=$MODEL_NAME \
 --gradient_accumulation_steps=2 \
 --gradient_checkpointing=1 \
---use_flash_attention_2=1 \
 --per_device_train_batch_size=16 \
---checkpoint_path="experiments/Mistral-7B-v0.1/checkpoint-21000"
---use_flash_attention_2=1 \
+--checkpoint_path="experiments/Mistral-7B-v0.1/checkpoint-21000" \
+--max_steps=300
+# --use_flash_attention_2=1 \
+
 
 # --checkpoint_path="experiments/Mistral-7B-v0.1/checkpoint-24000" 
 

@@ -25,6 +25,7 @@ if __name__ == "__main__":
     dataset = get_dataset(
         args.source_path, args.target_path, field="prompt", prompt_only=True
     )
+    
     # dataset.cleanup_cache_files()
 
     model_name = args.model_name
@@ -34,7 +35,7 @@ if __name__ == "__main__":
     ## Bits and Bytes config
     bnb_config = BitsAndBytesConfig(
         load_in_4bit=True,
-        bnb_4bit_quant_type="nf4",
+        bnb_4bit_quant_type="nf4",  
         # bnb_4bit_compute_dtype=torch.float16,
         bnb_4bit_compute_dtype=torch.bfloat16,
         bnb_4bit_use_double_quant=True
@@ -66,60 +67,58 @@ if __name__ == "__main__":
         dataset, batch_size=args.per_device_val_batch_size
     )
 
-    nlls = []
-    for batch in tqdm(dataloader):
-        inputs = tokenizer(batch["prompt"], padding=True, return_tensors="pt").to('cuda')
+    pad_id  = tokenizer.convert_tokens_to_ids(tokenizer.pad_token)
 
-        with torch.inference_mode():
-            outputs = model.generate(
-                **inputs, max_new_tokens=max_length, do_sample=True,
-                top_p=top_p, temperature=tmp
-            )
-        # tok.decode(outputs[0][inputs_length:], skip_special_tokens=True)
-        with torch.no_grad():
-            model_output = model(outputs, labels=outputs)
+    loss_fct = CrossEntropyLoss(reduction="mean", ignore_index=pad_id)
+    perplexities = []
 
-            neg_log_likelihood = model_output.loss
+    with torch.no_grad():
+        for batch in tqdm(dataloader):
+            inputs = tokenizer(batch["prompt"], padding=False, return_tensors="pt").to('cuda')
 
-        nlls.append(neg_log_likelihood)
+            story_lengths= len(tokenizer(batch["story"], padding=False, return_tensors="pt")['input_ids'][0])
 
-    ppl = torch.exp(torch.stack(nlls).mean())
-    print("Final perplexity is: ", ppl)
+            out_logits = model(**inputs).logits
+            out_logits =  out_logits[0][-story_lengths:]
+            labels_inputs = inputs['input_ids'][0][-story_lengths:]
+            shifted_labels = labels_inputs[1:]
+            shifted_logits = out_logits[:-1]
 
-    # encodings = tokenizer("\n\n".join(dataset["prompt"]), return_tensors="pt")
+            perplexities.append(torch.exp(loss_fct(shifted_logits, shifted_labels)))
 
-    # max_length = 4096
-    # stride = 512
-    # seq_len = encodings.input_ids.size(1)
-    # device = "cuda"
+    print("Final perplexity is: ", torch.mean(perplexities))
+    
 
-    # print("before perplexity estimation.")
+    # loss_fct = CrossEntropyLoss(reduction="none", ignore_index=tokenizer.pad_token)
+    # perplexities = []
+    # with torch.no_grad:
+    #     for batch in tqdm(dataloader):
 
-    # nlls = []
-    # prev_end_loc = 0
-    # for begin_loc in tqdm(range(0, seq_len, stride)):
-    #     end_loc = min(begin_loc + max_length, seq_len)
-    #     trg_len = end_loc - prev_end_loc  # may be different from stride on last loop
-    #     input_ids = encodings.input_ids[:, begin_loc:end_loc].to(device)
-    #     target_ids = input_ids.clone()
-    #     target_ids[:, :-trg_len] = -100
+    #         inputs = tokenizer(batch["prompt"], padding=True, return_tensors="pt").to('cuda')
 
-    #     with torch.no_grad():
-    #         outputs = model(input_ids)
-            
-    #         # loss is calculated using CrossEntropyLoss which averages over valid labels
-    #         # N.B. the model only calculates loss over trg_len - 1 labels, because it internally shifts the labels
-    #         # to the left by 1.
-    #         neg_log_likelihood = outputs.loss
+    #         story_lengths= tokenizer(batch["story"], padding=False, return_tensors="pt")['in']
+    #         inputs_length =  [len(i) for i in  inputs["input_ids"]]
 
-    #     nlls.append(neg_log_likelihood)
+    #         # with torch.inference_mode():
+    #         #     outputs = model.generate(
+    #         #         **inputs, max_new_tokens=max_length, do_sample=True,
+    #         #         top_p=top_p, temperature=tmp
+    #         #     )
+    #         #     outputs = tokenizer.decode(outputs[0][inputs_length:], skip_special_tokens=True)
 
-    #     if begin_loc == 0:
-    #         print("in the loop")
+    #         out_logits = model(**inputs).logits
+    #         out_logits =  out_logits[:][inputs_length:]
+    #         labels_inputs = inputs['input_ids'][:][inputs_length:]
+    #         perplexity_batch = torch.exp(
+    #         (loss_fct().sum(1)
+    #         / shift_attention_mask_batch.sum(1))
 
-    #     prev_end_loc = end_loc
-    #     if end_loc == seq_len:
-    #         break
+    #     ppls += perplexity_batch.tolist()
 
-    # ppl = torch.exp(torch.stack(nlls).mean())
-    # print("Final perplexity is: ", ppl)
+
+    #         batch_perplexity = compute_perplexity(model, tokenizer, outputs, args.per_device_val_batch_size)
+    #         perplexities.append(batch_perplexity)
+    #         print("Batch perplexity is: ", batch_perplexity)
+
+    #     ppl = np.mean(perplexities)
+    #     print("Final perplexity is: ", ppl)

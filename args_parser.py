@@ -4,7 +4,7 @@ import argparse
 def get_args():
     parser = argparse.ArgumentParser()
     add_args(parser)
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
     return args
 
 def add_args(parser: argparse.ArgumentParser):
