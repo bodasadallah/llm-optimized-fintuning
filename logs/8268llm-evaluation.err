@@ -1,0 +1,17 @@
+Found cached dataset text (/home/daria.kotova/.cache/huggingface/datasets/text/default-ef683339c6e1d1b5/0.0.0/cb1e9bd71a82ad27976be3b12b407850fe2837d80c22c5e03a28949843a8ace2)
+Found cached dataset text (/home/daria.kotova/.cache/huggingface/datasets/text/default-594e1b1157c143e0/0.0.0/cb1e9bd71a82ad27976be3b12b407850fe2837d80c22c5e03a28949843a8ace2)
+Loading cached processed dataset at /home/daria.kotova/.cache/huggingface/datasets/text/default-ef683339c6e1d1b5/0.0.0/cb1e9bd71a82ad27976be3b12b407850fe2837d80c22c5e03a28949843a8ace2/cache-f74c4750f7345492.arrow
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [01:14<01:14, 74.36s/it]Loading checkpoint shards: 100%|██████████| 2/2 [01:43<00:00, 47.73s/it]Loading checkpoint shards: 100%|██████████| 2/2 [01:43<00:00, 51.73s/it]
+  0%|          | 0/15138 [00:00<?, ?it/s]
+  0%|          | 0/1 [00:00<?, ?it/s][A
+100%|██████████| 1/1 [00:04<00:00,  4.01s/it][A100%|██████████| 1/1 [00:04<00:00,  4.01s/it]
+  0%|          | 1/15138 [01:24<353:30:11, 84.07s/it]
+  0%|          | 0/1 [00:00<?, ?it/s][A
+100%|██████████| 1/1 [00:03<00:00,  3.74s/it][A100%|██████████| 1/1 [00:03<00:00,  3.74s/it]
+  0%|          | 2/15138 [02:41<335:56:25, 79.90s/it]
+  0%|          | 0/1 [00:00<?, ?it/s][A
+100%|██████████| 1/1 [00:03<00:00,  3.76s/it][A100%|██████████| 1/1 [00:03<00:00,  3.76s/it]
+  0%|          | 3/15138 [03:58<330:20:05, 78.57s/it]
+  0%|          | 0/1 [00:00<?, ?it/s][A
+100%|██████████| 1/1 [00:04<00:00,  4.34s/it][A100%|██████████| 1/1 [00:04<00:00,  4.34s/it]
+  0%|          | 4/15138 [05:16<329:36:49, 78.41s/it]slurmstepd-ws-l2-004: error: *** JOB 8268 ON ws-l2-004 CANCELLED AT 2023-11-17T09:49:50 ***

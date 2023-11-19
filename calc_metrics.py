@@ -86,7 +86,7 @@ if __name__ == "__main__":
 
             perplexities.append(torch.exp(loss_fct(shifted_logits, shifted_labels)))
 
-    print("Final perplexity is: ", torch.mean(perplexities))
+    print("Final perplexity is: ", torch.mean(torch.tensor(perplexities)))
     
 
     # loss_fct = CrossEntropyLoss(reduction="none", ignore_index=tokenizer.pad_token)

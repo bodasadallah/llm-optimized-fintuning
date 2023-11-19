@@ -1,0 +1,96 @@
+starting.......................
+llm_finetuning
+logging_dir experiments//home/abdelrahman.sadallah/.cache/huggingface/hub/jais
+model arabic
+use_flash_attention_2 False
+report_to all
+max_steps 10000
+save_steps 1000
+logging_steps 500
+max_seq_length 512
+checkpoint_path None
+do_eval True
+do_train False
+evaluation_strategy steps
+eval_steps 10000
+log_level info
+logging_strategy steps
+save_total_limit 10
+run_name /home/abdelrahman.sadallah/.cache/huggingface/hub/jais
+base_prompt Below is a story idea. Write a short story based on this context.
+train_dataset_source_path datasets/english/writingPrompts/train.wp_source
+train_dataset_target_path datasets/english/writingPrompts/train.wp_target
+val_dataset_source_path datasets/english/writingPrompts/valid.wp_source
+val_dataset_target_path datasets/english/writingPrompts/valid.wp_target
+test_dataset_source_path datasets/english/writingPrompts/test.wp_source
+test_dataset_target_path datasets/english/writingPrompts/test.wp_target
+source_path datasets/english/writingPrompts/test.wp_source
+target_path datasets/english/writingPrompts/test.wp_target
+field prompt
+model_name /home/abdelrahman.sadallah/.cache/huggingface/hub/jais
+output_dir ./experiments
+per_device_train_batch_size 1
+per_device_val_batch_size 1
+gradient_accumulation_steps 1
+optim paged_adamw_32bit
+learning_rate 0.0002
+max_grad_norm 0.3
+warmup_ratio 0.03
+lr_scheduler_type constant
+group_by_length True
+bnb_4bit_quant_type nf4
+bnb_4bit_compute_dtype float32
+bnb_4bit_use_double_quant True
+gradient_checkpointing False
+lora_alpha 16
+lora_dropout 0.1
+lora_r 64
+bias none
+task_type CAUSAL_LM
+lora_target_modules ['c_attn', 'c_proj', 'c_fc', 'c_fc2']
+Loading the arabic datasets
+trainable params: 435988520 || all params: 6729458360 || trainable%: 6.478805524550419
+save_steps: 1000
+logging_steps: 500
+Saving the model to ./experiments/jais
+{'loss': 2.848, 'learning_rate': 0.0002, 'epoch': 0.0}
+{'loss': 2.7223, 'learning_rate': 0.0002, 'epoch': 0.01}
+{'loss': 2.6764, 'learning_rate': 0.0002, 'epoch': 0.01}
+{'loss': 2.7175, 'learning_rate': 0.0002, 'epoch': 0.01}
+{'loss': 2.7574, 'learning_rate': 0.0002, 'epoch': 0.01}
+{'loss': 2.7264, 'learning_rate': 0.0002, 'epoch': 0.02}
+{'loss': 2.663, 'learning_rate': 0.0002, 'epoch': 0.02}
+{'loss': 2.6491, 'learning_rate': 0.0002, 'epoch': 0.02}
+{'loss': 2.6539, 'learning_rate': 0.0002, 'epoch': 0.03}
+{'loss': 2.6336, 'learning_rate': 0.0002, 'epoch': 0.03}
+{'loss': 2.714, 'learning_rate': 0.0002, 'epoch': 0.03}
+{'loss': 2.6978, 'learning_rate': 0.0002, 'epoch': 0.04}
+{'loss': 2.6446, 'learning_rate': 0.0002, 'epoch': 0.04}
+{'loss': 2.6985, 'learning_rate': 0.0002, 'epoch': 0.04}
+{'loss': 2.717, 'learning_rate': 0.0002, 'epoch': 0.04}
+{'loss': 2.665, 'learning_rate': 0.0002, 'epoch': 0.05}
+{'loss': 2.6201, 'learning_rate': 0.0002, 'epoch': 0.05}
+{'loss': 2.6889, 'learning_rate': 0.0002, 'epoch': 0.05}
+{'loss': 2.6772, 'learning_rate': 0.0002, 'epoch': 0.06}
+{'loss': 2.677, 'learning_rate': 0.0002, 'epoch': 0.06}
+{'eval_loss': 1.0160539150238037, 'eval_runtime': 10760.1771, 'eval_samples_per_second': 1.975, 'eval_steps_per_second': 1.975, 'epoch': 0.06}
+{'loss': 2.6959, 'learning_rate': 0.0002, 'epoch': 0.06}
+{'loss': 2.6537, 'learning_rate': 0.0002, 'epoch': 0.06}
+{'loss': 2.646, 'learning_rate': 0.0002, 'epoch': 0.07}
+{'loss': 2.6385, 'learning_rate': 0.0002, 'epoch': 0.07}
+{'loss': 2.7758, 'learning_rate': 0.0002, 'epoch': 0.07}
+{'loss': 2.6346, 'learning_rate': 0.0002, 'epoch': 0.08}
+{'loss': 2.6672, 'learning_rate': 0.0002, 'epoch': 0.08}
+{'loss': 2.6466, 'learning_rate': 0.0002, 'epoch': 0.08}
+{'loss': 2.6491, 'learning_rate': 0.0002, 'epoch': 0.09}
+{'loss': 2.6354, 'learning_rate': 0.0002, 'epoch': 0.09}
+{'loss': 2.6093, 'learning_rate': 0.0002, 'epoch': 0.09}
+{'loss': 2.6614, 'learning_rate': 0.0002, 'epoch': 0.09}
+{'loss': 2.6479, 'learning_rate': 0.0002, 'epoch': 0.1}
+{'loss': 2.6402, 'learning_rate': 0.0002, 'epoch': 0.1}
+{'loss': 2.6736, 'learning_rate': 0.0002, 'epoch': 0.1}
+{'loss': 2.7083, 'learning_rate': 0.0002, 'epoch': 0.11}
+{'loss': 2.5751, 'learning_rate': 0.0002, 'epoch': 0.11}
+{'loss': 2.7049, 'learning_rate': 0.0002, 'epoch': 0.11}
+{'loss': 2.6079, 'learning_rate': 0.0002, 'epoch': 0.11}
+{'loss': 2.6031, 'learning_rate': 0.0002, 'epoch': 0.12}

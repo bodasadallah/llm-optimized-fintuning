@@ -1,0 +1,38 @@
+Found cached dataset text (/home/daria.kotova/.cache/huggingface/datasets/text/default-ef683339c6e1d1b5/0.0.0/cb1e9bd71a82ad27976be3b12b407850fe2837d80c22c5e03a28949843a8ace2)
+Found cached dataset text (/home/daria.kotova/.cache/huggingface/datasets/text/default-594e1b1157c143e0/0.0.0/cb1e9bd71a82ad27976be3b12b407850fe2837d80c22c5e03a28949843a8ace2)
+Loading cached processed dataset at /home/daria.kotova/.cache/huggingface/datasets/text/default-ef683339c6e1d1b5/0.0.0/cb1e9bd71a82ad27976be3b12b407850fe2837d80c22c5e03a28949843a8ace2/cache-f74c4750f7345492.arrow
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:54<00:54, 54.77s/it]Loading checkpoint shards: 100%|██████████| 2/2 [01:17<00:00, 35.82s/it]Loading checkpoint shards: 100%|██████████| 2/2 [01:17<00:00, 38.67s/it]
+Traceback (most recent call last):
+  File "/home/daria.kotova/ai/llm-optimized-fintuning/calc_metrics.py", line 49, in <module>
+    model = PeftModel.from_pretrained(model, args.checkpoint_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/daria.kotova/miniconda3/lib/python3.11/site-packages/peft/peft_model.py", line 305, in from_pretrained
+    model = MODEL_TYPE_TO_PEFT_MODEL_MAPPING[config.task_type](model, config, adapter_name)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/daria.kotova/miniconda3/lib/python3.11/site-packages/peft/peft_model.py", line 947, in __init__
+    super().__init__(model, peft_config, adapter_name)
+  File "/home/daria.kotova/miniconda3/lib/python3.11/site-packages/peft/peft_model.py", line 119, in __init__
+    self.base_model = cls(model, {adapter_name: peft_config}, adapter_name)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/daria.kotova/miniconda3/lib/python3.11/site-packages/peft/tuners/lora/model.py", line 111, in __init__
+    super().__init__(model, config, adapter_name)
+  File "/home/daria.kotova/miniconda3/lib/python3.11/site-packages/peft/tuners/tuners_utils.py", line 93, in __init__
+    self.inject_adapter(self.model, adapter_name)
+  File "/home/daria.kotova/miniconda3/lib/python3.11/site-packages/peft/tuners/tuners_utils.py", line 231, in inject_adapter
+    self._create_and_replace(peft_config, adapter_name, target, target_name, parent, **optional_kwargs)
+  File "/home/daria.kotova/miniconda3/lib/python3.11/site-packages/peft/tuners/lora/model.py", line 197, in _create_and_replace
+    self._replace_module(parent, target_name, new_module, target)
+  File "/home/daria.kotova/miniconda3/lib/python3.11/site-packages/peft/tuners/lora/model.py", line 227, in _replace_module
+    module.to(child.weight.device)
+  File "/home/daria.kotova/miniconda3/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1160, in to
+    return self._apply(convert)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/daria.kotova/miniconda3/lib/python3.11/site-packages/torch/nn/modules/module.py", line 810, in _apply
+    module._apply(fn)
+  File "/home/daria.kotova/miniconda3/lib/python3.11/site-packages/torch/nn/modules/module.py", line 833, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/home/daria.kotova/miniconda3/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1158, in convert
+    return t.to(device, dtype if t.is_floating_point() or t.is_complex() else None, non_blocking)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.cuda.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacty of 23.62 GiB of which 6.12 MiB is free. Process 1259519 has 10.53 GiB memory in use. Process 1312271 has 8.23 GiB memory in use. Including non-PyTorch memory, this process has 4.52 GiB memory in use. Of the allocated memory 4.25 GiB is allocated by PyTorch, and 86.12 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting max_split_size_mb to avoid fragmentation.  See documentation for Memory Management and PYTORCH_CUDA_ALLOC_CONF
