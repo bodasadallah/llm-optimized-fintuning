@@ -1,0 +1,3 @@
+/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/datasets/table.py:1387: FutureWarning: promote has been superseded by mode='default'.
+  return cls._concat_blocks(pa_tables_to_concat_vertically, axis=0)
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]

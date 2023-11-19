@@ -1,5 +1,5 @@
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 from peft import PeftModel 
 from args_parser import get_args
 from pathlib import Path
@@ -27,14 +27,28 @@ if __name__ == "__main__":
 
     print("1. Loaded dataset.")
 
+    bnb_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.bfloat16,
+        bnb_4bit_use_double_quant=True
+    )
+
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
-        load_in_4bit=True,
-        torch_dtype=torch.bfloat16,
+        quantization_config=bnb_config,
+        trust_remote_code=True,
         device_map='auto'
     )
+
+    # model = AutoModelForCausalLM.from_pretrained(
+    #     model_name,
+    #     load_in_4bit=True,
+    #     torch_dtype=torch.bfloat16,
+    #     device_map='auto'
+    # )
+
     model = PeftModel.from_pretrained(model, args.checkpoint_path)
-    # model = PeftModel.from_pretrained(model) # Baseline
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     tokenizer.bos_token_id = 1
     tokenizer.pad_token = tokenizer.eos_token
@@ -64,46 +78,46 @@ if __name__ == "__main__":
     i = 0
     for batch in tqdm(dataloader): # ['idea', 'story', 'prompt']
         
-        if i >= 161:
+        # if i >= 161:
 
-            inputs = tokenizer(batch["prompt"], padding=True, return_tensors="pt").to('cuda')
+        inputs = tokenizer(batch["prompt"], padding=True, return_tensors="pt").to('cuda')
 
-            # with torch.no_grad():
-            with torch.inference_mode():
-                outputs = model.generate(
-                    **inputs, max_new_tokens=max_length, do_sample=True,
-                    top_p=top_p, temperature=tmp,
-                )
+        # with torch.no_grad():
+        with torch.inference_mode():
+            outputs = model.generate(
+                **inputs, max_new_tokens=max_length, do_sample=True,
+                top_p=top_p, temperature=tmp,
+            )
 
-            generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
-            generated_texts = [res.split('Response:')[-1] for res in generated_texts]
+        generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
+        generated_texts = [res.split('Response:')[-1] for res in generated_texts]
 
-            # print(len(generated_texts), len(batch['story']))
-            # print(generated_texts)
+        # print(len(generated_texts), len(batch['story']))
+        # print(generated_texts)
 
-            result = bertscore.compute(predictions=generated_texts, references=batch['story'],
-                                                lang="en") # precision, recall, F1
+        result = bertscore.compute(predictions=generated_texts, references=batch['story'],
+                                            lang="en") # precision, recall, F1
 
-            pres += sum(result['precision'])
-            reca += sum(result['recall'])
-            f1 += sum(result['f1'])
+        pres += sum(result['precision'])
+        reca += sum(result['recall'])
+        f1 += sum(result['f1'])
 
-            if i < 2:
-                print(pres)
-                print(reca)
-                print(f1)
-                
-            if i % 10 == 0:
-                with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore.txt', 'a') as f:
-                    f.write(str(i+1) + ' ' + str(pres) + ' ' + str(reca) + ' ' + str(f1) + '\n')
-                    f.flush()
+        if i < 2:
+            print(pres)
+            print(reca)
+            print(f1)
+            
+        if i % 10 == 0:
+            with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore24000.txt', 'a') as f:
+                f.write(str(i+1) + ' ' + str(pres) + ' ' + str(reca) + ' ' + str(f1) + '\n')
+                f.flush()
 
-            i += 1
+        i += 1
 
-        else:
-            i += 1
+        # else:
+        #     i += 1
 
-    with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore.txt', 'a') as f:
+    with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore24000.txt', 'a') as f:
                 f.write(str(i) + ' ' + str(pres) + ' ' + str(reca) + ' ' + str(f1) + '\n')
                 f.flush()
                 

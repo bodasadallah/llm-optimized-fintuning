@@ -1,0 +1,79 @@
+/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/datasets/table.py:1387: FutureWarning: promote has been superseded by mode='default'.
+  return cls._concat_blocks(pa_tables_to_concat_vertically, axis=0)
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:12<00:12, 12.35s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:18<00:00,  8.58s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:18<00:00,  9.15s/it]
+  0%|          | 0/237 [00:00<?, ?it/s]Setting `pad_token_id` to `eos_token_id`:2 for open-end generation.
+  0%|          | 0/237 [00:01<?, ?it/s]
+Traceback (most recent call last):
+  File "/home/anastasiia.demidova/llm/llm-optimized-fintuning/calc_metrics_bert.py", line 73, in <module>
+    outputs = model.generate(
+              ^^^^^^^^^^^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/peft/peft_model.py", line 731, in generate
+    outputs = self.base_model.generate(**kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 115, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/transformers/generation/utils.py", line 1719, in generate
+    return self.sample(
+           ^^^^^^^^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/transformers/generation/utils.py", line 2801, in sample
+    outputs = self(
+              ^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/accelerate/hooks.py", line 164, in new_forward
+    output = module._old_forward(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/transformers/models/mistral/modeling_mistral.py", line 1009, in forward
+    outputs = self.model(
+              ^^^^^^^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/accelerate/hooks.py", line 164, in new_forward
+    output = module._old_forward(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/transformers/models/mistral/modeling_mistral.py", line 897, in forward
+    layer_outputs = decoder_layer(
+                    ^^^^^^^^^^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/accelerate/hooks.py", line 164, in new_forward
+    output = module._old_forward(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/transformers/models/mistral/modeling_mistral.py", line 626, in forward
+    hidden_states, self_attn_weights, present_key_value = self.self_attn(
+                                                          ^^^^^^^^^^^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/accelerate/hooks.py", line 164, in new_forward
+    output = module._old_forward(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/transformers/models/mistral/modeling_mistral.py", line 244, in forward
+    query_states = self.q_proj(hidden_states)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/anastasiia.demidova/miniconda3/lib/python3.11/site-packages/peft/tuners/lora.py", line 565, in forward
+    result = F.linear(x, transpose(self.weight, self.fan_in_fan_out), bias=self.bias)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: mat1 and mat2 shapes cannot be multiplied (6592x4096 and 1x8388608)

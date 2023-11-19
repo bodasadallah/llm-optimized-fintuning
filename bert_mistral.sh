@@ -16,7 +16,7 @@ echo "starting......................."
 MODEL_NAME="Mistral-7B-v0.1" # 64
 
 echo $MODEL_NAME
-python calc_metrics_bert.py --checkpoint_path="experiments/Mistral-7B-v0.1/checkpoint-41000" --model_name="mistralai/Mistral-7B-v0.1"
+python calc_metrics_bert.py --checkpoint_path="experiments/Mistral-7B-v0.1/checkpoint-24000" --model_name="mistralai/Mistral-7B-v0.1"
 # python calc_metrics_bert.py
 
 echo " ending "
