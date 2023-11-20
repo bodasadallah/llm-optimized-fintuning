@@ -1,0 +1,55 @@
+starting.......................
+llm_finetuning
+logging_dir experiments/mistralai/Mistral-7B-v0.1
+model english
+use_flash_attention_2 False
+report_to all
+max_steps 300
+save_steps 80
+logging_steps 500
+max_seq_length 512
+checkpoint_path experiments/Mistral-7B-v0.1/checkpoint-21000
+do_eval True
+do_train False
+evaluation_strategy steps
+eval_steps 10000
+log_level info
+logging_strategy steps
+save_total_limit 10
+run_name mistralai/Mistral-7B-v0.1
+base_prompt Below is a story idea. Write a short story based on this context.
+train_dataset_source_path datasets/english/writingPrompts/train.wp_source
+train_dataset_target_path datasets/english/writingPrompts/train.wp_target
+val_dataset_source_path datasets/english/writingPrompts/valid.wp_source
+val_dataset_target_path datasets/english/writingPrompts/valid.wp_target
+test_dataset_source_path datasets/english/writingPrompts/test.wp_source
+test_dataset_target_path datasets/english/writingPrompts/test.wp_target
+source_path datasets/english/writingPrompts/test.wp_source
+target_path datasets/english/writingPrompts/test.wp_target
+field prompt
+model_name mistralai/Mistral-7B-v0.1
+output_dir ./experiments
+per_device_train_batch_size 16
+per_device_val_batch_size 1
+gradient_accumulation_steps 2
+optim paged_adamw_32bit
+learning_rate 0.0002
+max_grad_norm 0.3
+warmup_ratio 0.03
+lr_scheduler_type constant
+group_by_length True
+bnb_4bit_quant_type nf4
+bnb_4bit_compute_dtype bfloat16
+bnb_4bit_use_double_quant True
+gradient_checkpointing True
+lora_alpha 16
+lora_dropout 0.1
+lora_r 64
+bias none
+task_type CAUSAL_LM
+lora_target_modules ['q_proj', 'up_proj', 'o_proj', 'k_proj', 'down_proj', 'gate_proj', 'v_proj']
+Loading the english datasets
+trainable params: 262410240 || all params: 3752071168 || trainable%: 6.993743675173274
+save_steps: 80
+logging_steps: 500
+Saving the model to ./experiments/Mistral-7B-v0.1

@@ -1,0 +1,9 @@
+Found cached dataset text (/home/daria.kotova/.cache/huggingface/datasets/text/default-ef683339c6e1d1b5/0.0.0/cb1e9bd71a82ad27976be3b12b407850fe2837d80c22c5e03a28949843a8ace2)
+Found cached dataset text (/home/daria.kotova/.cache/huggingface/datasets/text/default-594e1b1157c143e0/0.0.0/cb1e9bd71a82ad27976be3b12b407850fe2837d80c22c5e03a28949843a8ace2)
+Loading cached processed dataset at /home/daria.kotova/.cache/huggingface/datasets/text/default-ef683339c6e1d1b5/0.0.0/cb1e9bd71a82ad27976be3b12b407850fe2837d80c22c5e03a28949843a8ace2/cache-f74c4750f7345492.arrow
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:12<00:12, 12.87s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:17<00:00,  7.92s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:17<00:00,  8.66s/it]
+  0%|          | 0/15138 [00:00<?, ?it/s]  0%|          | 0/15138 [01:25<?, ?it/s]
+Traceback (most recent call last):
+  File "/home/daria.kotova/ai/llm-optimized-fintuning/calc_metrics.py", line 91, in <module>
+    (loss_fct(shift_logits.transpose(1, 2), shift_labels)).sum(1)
+IndexError: Dimension out of range (expected to be in range of [-1, 0], but got 1)

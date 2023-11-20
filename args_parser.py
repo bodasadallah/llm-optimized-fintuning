@@ -4,7 +4,7 @@ import argparse
 def get_args():
     parser = argparse.ArgumentParser()
     add_args(parser)
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
     return args
 
 def add_args(parser: argparse.ArgumentParser):
@@ -110,7 +110,7 @@ def add_args(parser: argparse.ArgumentParser):
                             default=4)
     parser.add_argument('--per_device_val_batch_size',
                             type=int,
-                            default=2)
+                            default=1)
     parser.add_argument('--gradient_accumulation_steps',
                             type=int,
                             default=2)

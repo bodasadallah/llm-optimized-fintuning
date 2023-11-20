@@ -1,0 +1,22 @@
+Found cached dataset text (/home/daria.kotova/.cache/huggingface/datasets/text/default-ef683339c6e1d1b5/0.0.0/cb1e9bd71a82ad27976be3b12b407850fe2837d80c22c5e03a28949843a8ace2)
+Found cached dataset text (/home/daria.kotova/.cache/huggingface/datasets/text/default-594e1b1157c143e0/0.0.0/cb1e9bd71a82ad27976be3b12b407850fe2837d80c22c5e03a28949843a8ace2)
+Loading cached processed dataset at /home/daria.kotova/.cache/huggingface/datasets/text/default-ef683339c6e1d1b5/0.0.0/cb1e9bd71a82ad27976be3b12b407850fe2837d80c22c5e03a28949843a8ace2/cache-f74c4750f7345492.arrow
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:13<00:13, 13.54s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:18<00:00,  8.36s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:18<00:00,  9.14s/it]
+  0%|          | 0/15138 [00:00<?, ?it/s]  0%|          | 0/15138 [01:16<?, ?it/s]
+Traceback (most recent call last):
+  File "/home/daria.kotova/ai/llm-optimized-fintuning/calc_metrics.py", line 90, in <module>
+    (loss_fct(shift_logits.transpose(1, 2), shift_labels)).sum(1)
+     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/daria.kotova/miniconda3/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1518, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/daria.kotova/miniconda3/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1527, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/daria.kotova/miniconda3/lib/python3.11/site-packages/torch/nn/modules/loss.py", line 1179, in forward
+    return F.cross_entropy(input, target, weight=self.weight,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/daria.kotova/miniconda3/lib/python3.11/site-packages/torch/nn/functional.py", line 3053, in cross_entropy
+    return torch._C._nn.cross_entropy_loss(input, target, weight, _Reduction.get_enum(reduction), ignore_index, label_smoothing)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Expected target size [1, 1899], got [1, 1900, 31999]
