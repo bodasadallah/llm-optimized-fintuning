@@ -1,6 +1,7 @@
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer#, BitsAndBytesConfig
 from args_parser import get_args
+from peft import PeftModel
 from pathlib import Path
 from utils import *
 from tqdm import tqdm
@@ -8,18 +9,15 @@ from evaluate import load
 
 tmp=0.9
 top_p=0.6
-max_length=512
-batch_size=26
-
+max_length=300
+batch_size=18
 if __name__ == "__main__":
 
     bertscore = load("bertscore")
     args = get_args()
     model_name = args.model_name
 
-    dataset = get_dataset( # English
-        args.source_path, args.target_path, field="prompt", prompt_only=True
-    )
+    _, _, dataset = get_arabic_datasets(field = 'prompt') # Arabic
     dataset.cleanup_cache_files()
 
     print("1. Loaded dataset.")
@@ -45,8 +43,9 @@ if __name__ == "__main__":
         torch_dtype=torch.bfloat16,
         device_map='auto'
     )
+    model = PeftModel.from_pretrained(model, args.checkpoint_path)
 
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side='left')
     tokenizer.bos_token_id = 1
     tokenizer.pad_token = tokenizer.eos_token
     stop_token_ids = [0]
@@ -69,8 +68,8 @@ if __name__ == "__main__":
     reca = 0
     f1 = 0
     i = 0
-    # with torch.no_grad():
-    with torch.inference_mode():
+    with torch.no_grad():
+    # with torch.inference_mode():
          
         for batch in tqdm(dataloader): # ['idea', 'story', 'prompt']
             # if i >= 0:
@@ -89,20 +88,21 @@ if __name__ == "__main__":
             # print(len(generated_texts), len(batch['story']))
             # print(generated_texts)
 
-            result = bertscore.compute(predictions=generated_texts, references=batch['story'],
-                                                lang="en") # precision, recall, F1
+            result = bertscore.compute(predictions=generated_texts, references=batch['poem'],
+                                                lang="ar") # precision, recall, F1
 
             pres += sum(result['precision'])
             reca += sum(result['recall'])
             f1 += sum(result['f1'])
 
             if i < 2:
+                # print(batch['prompt'], batch['poem'])
                 print(pres)
                 print(reca)
                 print(f1)
                 
             if i % 10 == 0:
-                with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore_base.txt', 'a') as f:
+                with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore_24000.txt', 'a') as f:
                     f.write(str(i+1) + ' ' + str(pres) + ' ' + str(reca) + ' ' + str(f1) + '\n')
                     f.flush()
 
@@ -111,7 +111,7 @@ if __name__ == "__main__":
             # else:
             #     i += 1
 
-    with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore_base.txt', 'a') as f:
+    with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore_24000.txt', 'a') as f:
                 f.write(str(i) + ' ' + str(pres) + ' ' + str(reca) + ' ' + str(f1) + '\n')
                 f.flush()
                  

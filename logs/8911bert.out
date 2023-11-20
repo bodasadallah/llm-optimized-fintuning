@@ -1,0 +1,5 @@
+starting.......................
+/home/anastasiia.demidova/.cache/huggingface/hub/jais
+1. Loaded dataset.
+2. Successfully loaded the model /home/anastasiia.demidova/.cache/huggingface/hub/jais into memory
+Saving the model to ./experiments/jais
