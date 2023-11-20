@@ -1,18 +1,13 @@
-import pathlib
-from datasets import load_dataset
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, AutoTokenizer
-from transformers import TrainingArguments
-from trl import SFTTrainer
-from evaluate import load
-from peft import LoraConfig, prepare_model_for_kbit_training
-from args_parser import get_args
-import re
 from pathlib import Path
+
+import torch
+from peft import LoraConfig
+from transformers import (AutoModelForCausalLM, AutoTokenizer,
+                          BitsAndBytesConfig, TrainingArguments)
+from trl import SFTTrainer
+
+from args_parser import get_args
 from utils import *
-from peft import PeftModel    
-
-
 
 if __name__ == "__main__":
     args = get_args()
