@@ -1,5 +1,12 @@
 # llm-optimized-fintuning
 
+In this project, we are exploring the potential of the new efficient fine-tuning
+method QLoRA, for Large Language Models (LLMs). We fine-tune three open-source
+models: LLama2-7b and Mistral-7b English and Jais-13b Arabic. The fine-tuning
+task for English is story generation. The task for the Arabic model is poem
+generation.
+
+## Datasets Description
 
 Prompt Tags:
 

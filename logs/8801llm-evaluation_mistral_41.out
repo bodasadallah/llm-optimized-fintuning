@@ -1,0 +1,7 @@
+starting.......................
+llm_evaluation
+1. Loaded dataset.
+2. Successfully loaded the model mistralai/Mistral-7B-v0.1 into memory
+Saving the model to ./experiments/Mistral-7B-v0.1
+Final perplexity is:  tensor(9.2934)
+ ending 
