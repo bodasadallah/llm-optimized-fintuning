@@ -5,7 +5,7 @@ datasets
 *.gz
 wandb
 experiments
-
+.vscode
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
