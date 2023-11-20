@@ -48,12 +48,12 @@ if __name__ == "__main__":
     bnb_config = BitsAndBytesConfig(
         load_in_4bit=True,
         bnb_4bit_quant_type="nf4",
-        # bnb_4bit_compute_dtype=torch.float16,
-        bnb_4bit_compute_dtype=torch.bfloat16,
+        bnb_4bit_compute_dtype=torch.float16,
+        # bnb_4bit_compute_dtype=torch.bfloat16,
         bnb_4bit_use_double_quant=True
     )
 
-
+    ## Load the base model
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
         quantization_config=bnb_config,
@@ -61,10 +61,6 @@ if __name__ == "__main__":
         use_flash_attention_2=args.use_flash_attention_2,
         device_map='auto'
     )
-
-
-    # adapters_name  = "experiments/jais/checkpoint-22000"
-    # model = PeftModel.from_pretrained(model, adapters_name)
 
 
     ## Enable gradient checkpointing
@@ -87,22 +83,22 @@ if __name__ == "__main__":
     tokenizer.padding_side = 'right'
 
 
+    ## get training arguments from the tokenizer
     output_dir = args.output_dir
-
     per_device_train_batch_size =  args.per_device_train_batch_size
     per_device_val_batch_size = args.per_device_val_batch_size
     gradient_accumulation_steps = args.gradient_accumulation_steps
 
-
+    ## calculate the number of steps per epoch
     epoch_steps = len(train_dataset) // (per_device_train_batch_size * gradient_accumulation_steps)
-
-
     optim = args.optim
-
     save_steps = args.save_steps
     logging_steps = args.logging_steps
     learning_rate = args.learning_rate
     max_grad_norm = args.max_grad_norm
+    max_steps = epoch_steps * 10
+    warmup_ratio = args.warmup_ratio
+    lr_scheduler_type = args.lr_scheduler_type
 
 
 
@@ -110,19 +106,14 @@ if __name__ == "__main__":
     print(f"logging_steps: {logging_steps}")
 
 
-    max_steps = epoch_steps * 10
-
-    warmup_ratio = args.warmup_ratio
-    lr_scheduler_type = args.lr_scheduler_type
-
-
+    ## Create logging and output directories
     output_dir = args.output_dir + f"/{model_name.split('/')[-1]}"
     loggig_dir = args.logging_dir + f"/{model_name.split('/')[-1]}" + f"/logs"
     Path(output_dir).mkdir(parents=True, exist_ok=True)
     Path(loggig_dir).mkdir(parents=True, exist_ok=True)
     print(f"Saving the model to {output_dir}")
 
-
+    ## Create training arguments
     training_arguments = TrainingArguments(
         output_dir=output_dir,
         per_device_train_batch_size=per_device_train_batch_size,
@@ -132,7 +123,6 @@ if __name__ == "__main__":
         evaluation_strategy=args.evaluation_strategy,
         do_train=args.do_train,
         do_eval=args.do_eval,
-        # eval_steps=10,
         eval_steps=args.eval_steps,
         run_name=args.run_name,
         save_steps=save_steps,
@@ -151,21 +141,12 @@ if __name__ == "__main__":
     )
 
 
+    ### LoRA Config
     lora_alpha = args.lora_alpha
     lora_dropout = args.lora_dropout
     lora_r = args.lora_r
-
-
     lora_target_modules = args.lora_target_modules
-    # [
-    #     "q_proj",
-    #     "up_proj",
-    #     "o_proj",
-    #     "k_proj",
-    #     "down_proj",
-    #     "gate_proj",
-    #     "v_proj",
-    # ]
+
 
     peft_config = LoraConfig(
         lora_alpha=lora_alpha,
@@ -180,6 +161,7 @@ if __name__ == "__main__":
     max_seq_length = args.max_seq_length
 
 
+    ## Create the trainer
     trainer = SFTTrainer(
         model=model,
         train_dataset=train_dataset,
@@ -192,11 +174,12 @@ if __name__ == "__main__":
     )
 
 
-    for name, module in trainer.model.named_modules():
-        if "norm" in name:
-            module = module.to(torch.float32)
+    # for name, module in trainer.model.named_modules():
+    #     if "norm" in name:
+    #         module = module.to(torch.float32)
 
 
+    ## Resume training from a checkpoint
     if args.checkpoint_path:
         trainer.train(resume_from_checkpoint=args.checkpoint_path)
     else:

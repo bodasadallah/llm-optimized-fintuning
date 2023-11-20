@@ -20,13 +20,14 @@ bnb_config = BitsAndBytesConfig(
     load_in_4bit=True,
     bnb_4bit_quant_type="nf4",
     # bnb_4bit_compute_dtype=torch.float16,
-    bnb_4bit_compute_dtype=torch.bfloat16,
+    bnb_4bit_compute_dtype=torch.float16,
     bnb_4bit_use_double_quant=True
 )
 
 model = AutoModelForCausalLM.from_pretrained(
     model_name,
-    quantization_config=bnb_config,
+    # quantization_config=bnb_config,
+    load_in_4bit=True,
     trust_remote_code=True,
     device_map='auto')
 tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side='left')
@@ -46,8 +47,7 @@ def gen(model, text: str, tmp=0.1, top_p=0.6, max_length=1024):
 
     return tokenizer.decode(outputs[0][inputs_length:], skip_special_tokens=True)
 
-base_text = '''### Instruction: Below is a prompt to generate a poem. Generate a poem.
-
+base_text = '''### Instruction: Below is a prompt to generate a poem.
 
 ### Input:
 '''
@@ -59,7 +59,8 @@ base_text = ''''''
 with open('arabic_output.txt', 'a') as f:
     while 1:
         print('-'*20)
-        text = input("Enter a prompt: ")
+        # text = input("Enter a prompt: ")
+        text = "أصبح الملك للذي فطر الخلق"
         print('-'*20)
 
         f.write('='*30 + '\n')
@@ -79,3 +80,4 @@ with open('arabic_output.txt', 'a') as f:
         print('-'*20)
         print(output)
         print('-'*20)
+        break
