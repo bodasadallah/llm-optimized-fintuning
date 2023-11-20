@@ -1,0 +1,13 @@
+starting.......................
+Mistral-7B-v0.1
+1. Loaded dataset.
+2. Successfully loaded the model mistralai/Mistral-7B-v0.1 into memory
+Saving the model to ./experiments/Mistral-7B-v0.1
+52.287429451942444
+51.23420071601868
+51.735127091407776
+104.64532816410065
+102.71636718511581
+103.63960766792297
+Average BERT Score:  0.8149355742255155
+ ending 

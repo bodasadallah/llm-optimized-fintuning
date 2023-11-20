@@ -6,7 +6,7 @@
 #SBATCH --time=24:00:00 # 10 hours of wall time
 #SBATCH --nodes=1  # 1 GPU node
 #SBATCH --mem=46000 # 32 GB of RAM
-#SBATCH --nodelist=ws-l5-008
+#SBATCH --nodelist=ws-l5-003
 
 
 echo "starting......................."
@@ -18,7 +18,7 @@ MODEL_NAME="Llama-2-7b-hf"
 
 
 echo $MODEL_NAME
-python calc_metrics_bert.py --checkpoint_path="experiments/Llama-2-7b-hf/checkpoint-24000"
+python calc_metrics_bert.py --checkpoint_path="experiments/Llama-2-7b-hf/checkpoint-41000"
 
 # # --checkpoint_path="experiments/Mistral-7B-v0.1/checkpoint-24000" 
 

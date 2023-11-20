@@ -11,7 +11,7 @@ from evaluate import load
 tmp=0.9
 top_p=0.6
 max_length=512
-batch_size=64 #16
+batch_size=26 #16
 
 if __name__ == "__main__":
 
@@ -72,52 +72,52 @@ if __name__ == "__main__":
     # for _ in itertools.islice(dataloader, 530): ### ??????????????
     #     pass
  
-    pres = 0
-    reca = 0
-    f1 = 0
+    pres = 6921.296994507313 # 0
+    reca = 6872.3922781944275 # 0
+    f1 = 6894.2493441700935 # 0
     i = 0
-    for batch in tqdm(dataloader): # ['idea', 'story', 'prompt']
-        
-        # if i >= 161:
+    # with torch.no_grad():
+    with torch.inference_mode():
+         
+        for batch in tqdm(dataloader): # ['idea', 'story', 'prompt']
+            if i >= 331 :
 
-        inputs = tokenizer(batch["prompt"], padding=True, return_tensors="pt").to('cuda')
+                inputs = tokenizer(batch["prompt"], padding=True, return_tensors="pt").to('cuda')
 
-        # with torch.no_grad():
-        with torch.inference_mode():
-            outputs = model.generate(
-                **inputs, max_new_tokens=max_length, do_sample=True,
-                top_p=top_p, temperature=tmp,
-            )
+                outputs = model.generate(
+                    **inputs, max_new_tokens=max_length, do_sample=True,
+                    top_p=top_p, temperature=tmp,
+                )
 
-        generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
-        generated_texts = [res.split('Response:')[-1] for res in generated_texts]
+                generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
+                generated_texts = [res.split('Response:')[-1] for res in generated_texts]
 
-        # print(len(generated_texts), len(batch['story']))
-        # print(generated_texts)
+                # print(len(generated_texts), len(batch['story']))
+                # print(generated_texts)
 
-        result = bertscore.compute(predictions=generated_texts, references=batch['story'],
-                                            lang="en") # precision, recall, F1
+                result = bertscore.compute(predictions=generated_texts, references=batch['story'],
+                                                    lang="en") # precision, recall, F1
 
-        pres += sum(result['precision'])
-        reca += sum(result['recall'])
-        f1 += sum(result['f1'])
+                pres += sum(result['precision'])
+                reca += sum(result['recall'])
+                f1 += sum(result['f1'])
 
-        if i < 2:
-            print(pres)
-            print(reca)
-            print(f1)
-            
-        if i % 10 == 0:
-            with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore24000.txt', 'a') as f:
-                f.write(str(i+1) + ' ' + str(pres) + ' ' + str(reca) + ' ' + str(f1) + '\n')
-                f.flush()
+                if i < 2:
+                    print(pres)
+                    print(reca)
+                    print(f1)
+                    
+                if i % 10 == 0:
+                    with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore41000.txt', 'a') as f:
+                        f.write(str(i+1) + ' ' + str(pres) + ' ' + str(reca) + ' ' + str(f1) + '\n')
+                        f.flush()
 
-        i += 1
+                i += 1
 
-        # else:
-        #     i += 1
+            else:
+                i += 1
 
-    with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore24000.txt', 'a') as f:
+    with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore41000.txt', 'a') as f:
                 f.write(str(i) + ' ' + str(pres) + ' ' + str(reca) + ' ' + str(f1) + '\n')
                 f.flush()
                 

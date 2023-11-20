@@ -6,20 +6,19 @@
 #SBATCH --time=24:00:00 # 10 hours of wall time
 #SBATCH --nodes=1  # 1 GPU node
 #SBATCH --mem=46000 # 32 GB of RAM
-#SBATCH --nodelist=ws-l5-003
+#SBATCH --nodelist=ws-l1-005
 
 
 echo "starting......................."
 
 
-MODEL_NAME="Llama-2-7b-hf"
-# MODEL_NAME="jais"
-# MODEL_NAME="Mistral-7B-v0.1"
+# MODEL_NAME="meta-llama/Llama-2-7b-hf"
+# MODEL_NAME="mistralai/Mistral-7B-v0.1"
+MODEL_NAME="/home/anastasiia.demidova/.cache/huggingface/hub/jais"
 
 
 echo $MODEL_NAME
-python calc_metrics_bert_copy.py --model_name="meta-llama/Llama-2-7b-hf" 
-# python calc_metrics_bert_copy.py --model_name="mistralai/Mistral-7B-v0.1"
+python calc_metrics_bert_base.py --model_name=$MODEL_NAME
 
 
 
