@@ -1,5 +1,5 @@
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer#, BitsAndBytesConfig
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 from args_parser import get_args
 from peft import PeftModel
 from pathlib import Path
@@ -10,7 +10,7 @@ from evaluate import load
 tmp=0.9
 top_p=0.6
 max_length=300
-batch_size=18
+batch_size=16
 if __name__ == "__main__":
 
     bertscore = load("bertscore")
@@ -36,14 +36,15 @@ if __name__ == "__main__":
     #     device_map='auto'
     # )
 
-    model = AutoModelForCausalLM.from_pretrained(
+    model = AutoModelForCausalLM.from_pretrained( # BASE
         model_name,
         trust_remote_code=True,
         load_in_4bit=True,
         torch_dtype=torch.bfloat16,
         device_map='auto'
     )
-    model = PeftModel.from_pretrained(model, args.checkpoint_path)
+
+    model = PeftModel.from_pretrained(model, args.checkpoint_path) # checkpoint
 
     tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side='left')
     tokenizer.bos_token_id = 1
@@ -64,15 +65,16 @@ if __name__ == "__main__":
         dataset, batch_size=batch_size
     )
 
-    pres = 0
-    reca = 0
-    f1 = 0
+    pres = 0#3874.2140145897865 # 0#5052.395387768745 # 
+    reca = 0#4070.6937471926212 # 0#5644.587640583515 #
+    f1 = 0#3960.138661801815 # 0#5313.835707426071 # 
     i = 0
     with torch.no_grad():
     # with torch.inference_mode():
          
         for batch in tqdm(dataloader): # ['idea', 'story', 'prompt']
-            # if i >= 0:
+            # if i >= 371: #571: #
+
 
             inputs = tokenizer(batch["prompt"], padding=True, return_tensors="pt").to('cuda')
             
@@ -102,7 +104,9 @@ if __name__ == "__main__":
                 print(f1)
                 
             if i % 10 == 0:
+                # with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore_base.txt', 'a') as f:
                 with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore_24000.txt', 'a') as f:
+                # with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore_90000.txt', 'a') as f:
                     f.write(str(i+1) + ' ' + str(pres) + ' ' + str(reca) + ' ' + str(f1) + '\n')
                     f.flush()
 
@@ -111,9 +115,11 @@ if __name__ == "__main__":
             # else:
             #     i += 1
 
+    # with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore_base.txt', 'a') as f:
     with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore_24000.txt', 'a') as f:
-                f.write(str(i) + ' ' + str(pres) + ' ' + str(reca) + ' ' + str(f1) + '\n')
-                f.flush()
+    # with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore_90000.txt', 'a') as f:
+        f.write(str(i) + ' ' + str(pres) + ' ' + str(reca) + ' ' + str(f1) + '\n')
+        f.flush()
                  
     print("Average BERT Score: ", pres / (i*batch_size))
 
