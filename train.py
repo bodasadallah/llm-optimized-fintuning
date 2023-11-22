@@ -9,7 +9,7 @@ from trl import SFTTrainer
 from args_parser import get_args
 from utils import *
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     args = get_args()
 
     for arg in vars(args):
@@ -20,7 +20,7 @@ if __name__ == "__main__":
     if args.model =='english':
         # Get the english datasets
 
-        print("Loading the english datasets")
+        print('Loading the english datasets')
         train_dataset, val_dataset, test_dataset = get_datasets(train_dataset_source_path=args.train_dataset_source_path,
                                                     train_dataset_target_path=args.train_dataset_target_path,
                                                     val_dataset_source_path=args.val_dataset_source_path,
@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     elif args.model == 'arabic':
         # Get the arabic datasets
-        print("Loading the arabic datasets")
+        print('Loading the arabic datasets')
         train_dataset, val_dataset, test_dataset = get_arabic_datasets(field = 'prompt')
 
 
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     ## Bits and Bytes config
     bnb_config = BitsAndBytesConfig(
         load_in_4bit=True,
-        bnb_4bit_quant_type="nf4",
+        bnb_4bit_quant_type='nf4',
         # bnb_4bit_compute_dtype=torch.float16,
         bnb_4bit_compute_dtype=torch.bfloat16,
         bnb_4bit_use_double_quant=True
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     )
 
 
-    # adapters_name  = "experiments/jais/checkpoint-22000"
+    # adapters_name  = 'experiments/jais/checkpoint-22000'
     # model = PeftModel.from_pretrained(model, adapters_name)
 
 
@@ -101,8 +101,8 @@ if __name__ == "__main__":
 
 
 
-    print(f"save_steps: {save_steps}")
-    print(f"logging_steps: {logging_steps}")
+    print(f'save_steps: {save_steps}')
+    print(f'logging_steps: {logging_steps}')
 
 
     max_steps = epoch_steps * 10
@@ -111,11 +111,11 @@ if __name__ == "__main__":
     lr_scheduler_type = args.lr_scheduler_type
 
 
-    output_dir = args.output_dir + f"/{model_name.split('/')[-1]}"
-    loggig_dir = args.logging_dir + f"/{model_name.split('/')[-1]}" + f"/logs"
+    output_dir = args.output_dir + f'/{model_name.split("/")[-1]}'
+    loggig_dir = args.logging_dir + f'/{model_name.split("/")[-1]}' + f'/logs'
     Path(output_dir).mkdir(parents=True, exist_ok=True)
     Path(loggig_dir).mkdir(parents=True, exist_ok=True)
-    print(f"Saving the model to {output_dir}")
+    print(f'Saving the model to {output_dir}')
 
 
     training_arguments = TrainingArguments(
@@ -153,21 +153,21 @@ if __name__ == "__main__":
 
     lora_target_modules = args.lora_target_modules
     # [
-    #     "q_proj",
-    #     "up_proj",
-    #     "o_proj",
-    #     "k_proj",
-    #     "down_proj",
-    #     "gate_proj",
-    #     "v_proj",
+    #     'q_proj',
+    #     'up_proj',
+    #     'o_proj',
+    #     'k_proj',
+    #     'down_proj',
+    #     'gate_proj',
+    #     'v_proj',
     # ]
 
     peft_config = LoraConfig(
         lora_alpha=lora_alpha,
         lora_dropout=lora_dropout,
         r=lora_r,
-        bias="none",
-        task_type="CAUSAL_LM",
+        bias='none',
+        task_type='CAUSAL_LM',
         target_modules = lora_target_modules
     )
 
@@ -188,7 +188,7 @@ if __name__ == "__main__":
 
 
     for name, module in trainer.model.named_modules():
-        if "norm" in name:
+        if 'norm' in name:
             module = module.to(torch.float32)
 
 
@@ -201,5 +201,5 @@ if __name__ == "__main__":
     # trainer.save_model()
 
 
-    print("Done training")
+    print('Done training')
     print(trainer.model)
