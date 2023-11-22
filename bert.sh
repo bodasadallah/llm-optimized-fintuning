@@ -19,7 +19,7 @@ MODEL_NAME="/home/anastasiia.demidova/.cache/huggingface/hub/jais"
 
 echo $MODEL_NAME
 # python calc_metrics_bert.py --checkpoint_path="experiments/Llama-2-7b-hf/checkpoint-41000"
-python calc_metrics_bert_arabic.py --checkpoint_path="experiments/jais/checkpoint-24000" --model_name=$MODEL_NAME
+python calc_metrics_bert_arabic.py --checkpoint_path="experiments/jais/checkpoint-90000" --model_name=$MODEL_NAME
 # # --checkpoint_path="experiments/Mistral-7B-v0.1/checkpoint-24000" 
 
 

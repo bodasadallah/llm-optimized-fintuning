@@ -10,7 +10,9 @@ from evaluate import load
 tmp=0.9
 top_p=0.6
 max_length=300
-batch_size=16
+# batch_size=18 
+batch_size=16 # checkpoint
+
 if __name__ == "__main__":
 
     bertscore = load("bertscore")
@@ -65,59 +67,60 @@ if __name__ == "__main__":
         dataset, batch_size=batch_size
     )
 
-    pres = 0#3874.2140145897865 # 0#5052.395387768745 # 
-    reca = 0#4070.6937471926212 # 0#5644.587640583515 #
-    f1 = 0#3960.138661801815 # 0#5313.835707426071 # 
+    pres = 2631.791871905327
+    reca =  2587.197250455618
+    f1 = 2528.635782510042
     i = 0
+
     with torch.no_grad():
     # with torch.inference_mode():
          
         for batch in tqdm(dataloader): # ['idea', 'story', 'prompt']
-            # if i >= 371: #571: #
+            if i >= 271:
 
 
-            inputs = tokenizer(batch["prompt"], padding=True, return_tensors="pt").to('cuda')
-            
-            
-            outputs = model.generate(
-                **inputs, max_new_tokens=max_length, do_sample=True,
-                top_p=top_p, temperature=tmp,
-            )
-
-            generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
-            generated_texts = [res.split('Response:')[-1] for res in generated_texts]
-
-            # print(len(generated_texts), len(batch['story']))
-            # print(generated_texts)
-
-            result = bertscore.compute(predictions=generated_texts, references=batch['poem'],
-                                                lang="ar") # precision, recall, F1
-
-            pres += sum(result['precision'])
-            reca += sum(result['recall'])
-            f1 += sum(result['f1'])
-
-            if i < 2:
-                # print(batch['prompt'], batch['poem'])
-                print(pres)
-                print(reca)
-                print(f1)
+                inputs = tokenizer(batch["prompt"], padding=True, return_tensors="pt").to('cuda')
                 
-            if i % 10 == 0:
-                # with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore_base.txt', 'a') as f:
-                with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore_24000.txt', 'a') as f:
-                # with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore_90000.txt', 'a') as f:
-                    f.write(str(i+1) + ' ' + str(pres) + ' ' + str(reca) + ' ' + str(f1) + '\n')
-                    f.flush()
+                
+                outputs = model.generate(
+                    **inputs, max_new_tokens=max_length, do_sample=True,
+                    top_p=top_p, temperature=tmp,
+                )
 
-            i += 1
+                generated_texts = tokenizer.batch_decode(outputs, skip_special_tokens=True)
+                generated_texts = [res.split('Response:')[-1] for res in generated_texts]
 
-            # else:
-            #     i += 1
+                # print(len(generated_texts), len(batch['story']))
+                # print(generated_texts)
+
+                result = bertscore.compute(predictions=generated_texts, references=batch['poem'],
+                                                    lang="ar") # precision, recall, F1
+
+                pres += sum(result['precision'])
+                reca += sum(result['recall'])
+                f1 += sum(result['f1'])
+
+                if i < 2:
+                    # print(batch['prompt'], batch['poem'])
+                    print(pres)
+                    print(reca)
+                    print(f1)
+                    
+                if i % 10 == 0:
+                    # with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore_base.txt', 'a') as f:
+                    with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore_90000.txt', 'a') as f:
+                    # with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore_170000.txt', 'a') as f:
+                        f.write(str(i+1) + ' ' + str(pres) + ' ' + str(reca) + ' ' + str(f1) + '\n')
+                        f.flush()
+
+                i += 1
+
+            else:
+                i += 1
 
     # with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore_base.txt', 'a') as f:
-    with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore_24000.txt', 'a') as f:
-    # with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore_90000.txt', 'a') as f:
+    with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore_90000.txt', 'a') as f:
+    # with open(args.output_dir + f"/{model_name.split('/')[-1]}" + '/bertscore_170000.txt', 'a') as f:
         f.write(str(i) + ' ' + str(pres) + ' ' + str(reca) + ' ' + str(f1) + '\n')
         f.flush()
                  
