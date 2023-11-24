@@ -8,7 +8,7 @@ generation.
 
 ## Datasets Description
 
-One of the primary datasets we utilize is an English dataset "Hierarchical Neural Story Generation" \cite{fan2018hierarchical}. This dataset contains a vase collection of 300K of human-written stories in the English language, which we can use to train our models and generate new stories. By analysing it, we assort several groups of tags ('Prompt Tags' Table). Most samples are related to 'Writing Prompt' ([ WP ]), so this fact makes it easier for model to study almost one kind of story.
+One of the primary datasets we utilize is an English dataset "Hierarchical Neural Story Generation". This dataset contains a vase collection of 300K of human-written stories in the English language, which we can use to train our models and generate new stories. By analysing it, we assort several groups of tags ('Prompt Tags' Table). Most samples are related to 'Writing Prompt' ([ WP ]), so this fact makes it easier for model to study almost one kind of story.
 
 **Prompt Tags:**
 
