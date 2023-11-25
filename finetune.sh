@@ -14,14 +14,14 @@ echo 'starting.......................'
 
 # MODEL_NAME='meta-llama/Llama-2-7b-hf'
 # MODEL_NAME='mistralai/Mistral-7B-v0.1'
-MODEL_NAME='/home/abdelrahman.sadallah/.cache/huggingface/hub/jais'
+MODEL_NAME=/home/abdelrahman.sadallah/.cache/huggingface/hub/jais
 
 # --do_train \
 WANDB_PROJECT=llm_finetuning
 
 echo $WANDB_PROJECT
 python train.py \
---save_steps=80 \
+--save_steps=1000 \
 --eval_steps=10000 \
 --do_eval=1 \
 --report_to='all' \
@@ -35,7 +35,7 @@ python train.py \
 --model='arabic' \
 --bnb_4bit_compute_dtype='float32' \
 --lora_target_modules 'c_attn' 'c_proj' 'c_fc' 'c_fc2' \
-# --checkpoint_path='experiments/jais/checkpoint-22000' 
+--checkpoint_path='experiments/jais/checkpoint-88000' 
 # --gradient_checkpointing=1 \
 # --use_flash_attention_2=1 \
 

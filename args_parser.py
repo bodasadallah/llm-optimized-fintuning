@@ -22,14 +22,14 @@ def add_args(parser: argparse.ArgumentParser):
                             type=bool,
                             default=False)
     parser.add_argument('--report_to',
-                            type=str,
+                            type=str,   
                             default='tensorboard')
     parser.add_argument('--save_steps',
                             type=int,
-                            default=400)
+                            default=1000)
     parser.add_argument('--max_seq_length',
                             type=int,
-                            default=512)
+                            default=128)
     parser.add_argument('--checkpoint_path',
                             type=str,
                             default=None)
@@ -44,7 +44,7 @@ def add_args(parser: argparse.ArgumentParser):
                             default='steps')
     parser.add_argument('--eval_steps',
                             type=int,
-                            default=10)
+                            default=10000)
     
 ####################################### Logs #######################################
 
@@ -53,7 +53,7 @@ def add_args(parser: argparse.ArgumentParser):
                             default='./logs')
     parser.add_argument('--logging_steps',
                             type=int,
-                            default=100)
+                            default=500)
     parser.add_argument('--log_level',
                             type=str,
                             default='info')
