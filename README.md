@@ -32,13 +32,31 @@ Additionally, we incorporate the poem Arabic dataset, known as Ashaar dataset, w
 
 ## Usage
 
-Finetuning is done by running the script finetune.sh. To get the perplexity of
-the model run claculate_perplexity.sh with the checkpoint parameter.
+For finetuning run:
+```
+bash finetune.sh
+```
+Feel free to adjust the parameters in your script to adapt the code for your PC and training regime.
 
-Checkpoints of the models should be located at experiments/MODEL_NAME. Those
-checkpoints are for adapters only. Make sure, your main model(Llama or Mistral)
-is at ./home/username/.cache/huggingface/hub/... !
+For perplexity evaluation run:
+```
+bash ./evaluate/calculate_perplexity.sh
+```
+with respective checkpoint_path parameter.
 
-For Arabic, we use different function to load the dataset. Also for model_name
-and tokenizer, just pass the path to the Jais model.
+For BERTScore evaluation run:
+```
+bash bert.sh
+```
+with respective checkpoint_path parameter.
 
+## Checkpoints
+
+Checkpoints with QLoRA adapters are available at:
+
+- LLaMA2-7b 24k iterations: https://huggingface.co/boda/llama2-7b-story-generation-24k
+- Mistral-7b 24k iterations: https://huggingface.co/boda/mistral-7b-story-generation-24k
+- Jais-13b 170k iterations: https://huggingface.co/boda/jais-13b-poem-generation
+
+Checkpoints of the models should be located at experiments/MODEL_NAME. Those checkpoints are for adapters only. Make sure, your main model(Llama or Mistral) is at ./home/username/.cache/huggingface/hub/... !
+For Arabic, we use different function to load the dataset. Also for model_name and tokenizer, just pass the path to the Jais model.
