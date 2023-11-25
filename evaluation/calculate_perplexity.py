@@ -5,7 +5,7 @@ from peft import PeftModel
 from torch.nn import CrossEntropyLoss
 from tqdm import tqdm
 from transformers import (AutoModelForCausalLM, BitsAndBytesConfig,
-                          LlamaTokenizer)
+                          AutoTokenizer)
 
 from args_parser import get_args
 from utils import *
@@ -18,9 +18,10 @@ if __name__ == '__main__':
     args = get_args()
     print(args)
 
-    dataset = get_dataset(
-        args.source_path, args.target_path, field='prompt', prompt_only=True
-    )
+    # dataset = get_dataset(
+    #     args.source_path, args.target_path, field='prompt'
+    # )
+    _, _, dataset = get_arabic_datasets()
 
     model_name = args.model_name
 
@@ -45,7 +46,7 @@ if __name__ == '__main__':
     # load the model from a checkpoint. Comment to get the not fine-tuned model
     model = PeftModel.from_pretrained(model, args.checkpoint_path)
     
-    tokenizer = LlamaTokenizer.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side='left')
     tokenizer.bos_token_id = 1
     tokenizer.pad_token = tokenizer.eos_token
     stop_token_ids = [0]
@@ -67,24 +68,30 @@ if __name__ == '__main__':
 
     loss_fct = CrossEntropyLoss(reduction='mean', ignore_index=pad_id)
     perplexities = []
+    nan_count = 0
 
     # IMPORTANT: currently works for batch_size=1 (or for the first element of the batch)
     with torch.no_grad():
         for batch in tqdm(dataloader):
-            inputs = tokenizer(batch['prompt'], padding=False, return_tensors='pt').to('cuda')
+            inputs = tokenizer(
+                batch['prompt'], padding=False, return_tensors='pt', truncation=True, max_length=2048).to('cuda')
 
-            story_length= len(tokenizer(batch['story'], padding=False, return_tensors='pt')['input_ids'][0])
+            story_length= len(tokenizer(batch['poem'], padding=False, return_tensors='pt')['input_ids'][0])
 
             out_logits = model(**inputs).logits
-
             # cut out the instruction
             out_logits =  out_logits[0][-story_length:]
             labels_inputs = inputs['input_ids'][0][-story_length:]
             # shift labels to the left by one
             shifted_labels = labels_inputs[1:]
             shifted_logits = out_logits[:-1]
+            
+            ppl = torch.exp(loss_fct(shifted_logits, shifted_labels))
+            if not ppl.isnan():
+                perplexities.append(ppl)
+                nan_count += 1
+            # print(ppl, end="\n")
+            
 
-            perplexities.append(torch.exp(loss_fct(shifted_logits, shifted_labels)))
-
-    print('Final perplexity is: ', torch.mean(torch.tensor(perplexities)))
+    print('Final perplexity is: ', torch.mean(torch.tensor(perplexities)), nan_count)
     

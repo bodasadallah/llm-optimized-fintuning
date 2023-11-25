@@ -9,7 +9,7 @@ from trl import SFTTrainer
 from args_parser import get_args
 from utils import *
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     args = get_args()
 
     for arg in vars(args):
@@ -20,7 +20,7 @@ if __name__ == "__main__":
     if args.model =='english':
         # Get the english datasets
 
-        print("Loading the english datasets")
+        print('Loading the english datasets')
         train_dataset, val_dataset, test_dataset = get_datasets(train_dataset_source_path=args.train_dataset_source_path,
                                                     train_dataset_target_path=args.train_dataset_target_path,
                                                     val_dataset_source_path=args.val_dataset_source_path,
@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     elif args.model == 'arabic':
         # Get the arabic datasets
-        print("Loading the arabic datasets")
+        print('Loading the arabic datasets')
         train_dataset, val_dataset, test_dataset = get_arabic_datasets(field = 'prompt')
 
 
@@ -97,8 +97,8 @@ if __name__ == "__main__":
 
 
 
-    print(f"save_steps: {save_steps}")
-    print(f"logging_steps: {logging_steps}")
+    print(f'save_steps: {save_steps}')
+    print(f'logging_steps: {logging_steps}')
 
 
     ## Create logging and output directories
@@ -106,7 +106,7 @@ if __name__ == "__main__":
     loggig_dir = args.logging_dir + f"/{model_name.split('/')[-1]}" + f"/logs"
     Path(output_dir).mkdir(parents=True, exist_ok=True)
     Path(loggig_dir).mkdir(parents=True, exist_ok=True)
-    print(f"Saving the model to {output_dir}")
+    print(f'Saving the model to {output_dir}')
 
     ## Create training arguments
     training_arguments = TrainingArguments(
@@ -142,13 +142,12 @@ if __name__ == "__main__":
     lora_r = args.lora_r
     lora_target_modules = args.lora_target_modules
 
-
     peft_config = LoraConfig(
         lora_alpha=lora_alpha,
         lora_dropout=lora_dropout,
         r=lora_r,
-        bias="none",
-        task_type="CAUSAL_LM",
+        bias='none',
+        task_type='CAUSAL_LM',
         target_modules = lora_target_modules
     )
 
@@ -184,5 +183,5 @@ if __name__ == "__main__":
     # trainer.save_model()
 
 
-    print("Done training")
+    print('Done training')
     print(trainer.model)
