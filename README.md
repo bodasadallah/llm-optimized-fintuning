@@ -46,7 +46,7 @@ with respective checkpoint_path parameter.
 
 For BERTScore evaluation run:
 ```
-bash bert.sh
+bash ./evaluate/bert.sh
 ```
 with respective checkpoint_path parameter.
 
