@@ -9,10 +9,6 @@ model_name = 'meta-llama/Llama-2-7b-hf'
 # adapters_name  = 'experiments/Llama-2-7b-hf/checkpoint-16000'
 # model_name = 'mistralai/Mistral-7B-v0.1'
 
-
-
-
-
 print(f'Starting to load the model {model_name} into memory')
 
 m = AutoModelForCausalLM.from_pretrained(

@@ -1,16 +1,6 @@
 import torch
 from peft import PeftModel    
-from transformers import AutoModelForCausalLM, AutoTokenizer, LlamaTokenizer, BitsAndBytesConfig, StoppingCriteriaList, TextIteratorStreamer
-from transformers import pipeline
-
-
-
-
-
-
-
-
-
+from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
 
 adapters_name  = "experiments/jais/checkpoint-25000"
@@ -51,8 +41,6 @@ base_text = '''### Instruction: Below is a prompt to generate a poem.
 
 ### Input:
 '''
-
-base_text = ''''''
 
 # Happy kid was playing at the park, but then he broke his leg, and his life got completely changed.
 

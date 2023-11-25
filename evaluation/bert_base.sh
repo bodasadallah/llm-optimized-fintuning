@@ -18,7 +18,7 @@ MODEL_NAME="Llama-2-7b-hf"
 
 
 echo $MODEL_NAME
-python calc_metrics_bert_copy.py --model_name="meta-llama/Llama-2-7b-hf" 
+python calc_metrics_bert.py --model_name="meta-llama/Llama-2-7b-hf" 
 # python calc_metrics_bert_copy.py --model_name="mistralai/Mistral-7B-v0.1"
 
 
